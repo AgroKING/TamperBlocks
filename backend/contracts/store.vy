@@ -1,12 +1,13 @@
-# pragma 0.4.3
-# @license MIT
-'''
+# pragma version ^0.3.10
 
-To do :
-    - to store hash safely
-    - to retrieve hash ??
+event Stored:
+    credID: int128
+    IssuerID: bytes32
+    credHash: bytes32
+    blockNo: uint256
+    prevBlock: bytes32
 
- smart contract stuff
-
-
-'''
+@external
+def inject(_ID: int128, _sign: bytes32, _hash: bytes32) -> bool:
+    log Stored(_ID, _sign, _hash, block.number, block.prevhash)
+    return True
