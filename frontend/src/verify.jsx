@@ -1,3 +1,4 @@
+
 import CredentialCard from "./credcard";
 import { useState } from "react";
 
@@ -10,97 +11,218 @@ function Verify() {
         branch: "",
         gyear: ""
     });
-    const [verificationResult, setVerificationResult] = useState(null);
 
-    function handlevChange(event) {
+    const [verificationResult, setVerificationResult] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    function handleChange(event) {
         setVerifyData({
             ...verifyData,
             [event.target.name]: event.target.value
         });
     }
 
-    async function handlevsubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
 
-        const response = await fetch(
-            "http://localhost:3000/credentials"
-        );
+        setLoading(true);
+        setVerificationResult(null);
 
-        const result = await response.json();
+        try {
+            const response = await fetch(
+                "http://localhost:3000/credentials"
+            );
 
-        const found = result.find(
-            (e) =>
-                e.Rollno === verifyData.Rollno &&
-                e.name === verifyData.name
-        );
+            const result = await response.json();
 
-        if (!found) {
-            setVerificationResult("notfound");
-        } else {
-            setVerificationResult(found);
+            const found = result.find(
+                (e) =>
+                    e.Rollno === verifyData.Rollno &&
+                    e.name === verifyData.name
+            );
+
+            if (!found) {
+                setVerificationResult("notfound");
+            } else {
+                setVerificationResult(found);
+            }
+
+        } catch (error) {
+            console.error(error);
+            setVerificationResult("error");
         }
+
+        setLoading(false);
     }
 
     return (
-        <div>
+        <div className="verify-container">
 
-            <h1>Verification of credentials by institutions</h1>
+            <div className="verify-form-card">
 
-            <form onSubmit={handlevsubmit}>
+                <div className="verify-header">
+                    <h3>Verify a Credential</h3>
 
-                <p>Student Name:</p>
-                <input
-                    name="name"
-                    value={verifyData.name}
-                    onChange={handlevChange}
-                    placeholder="input name"
-                />
+                    <p>
+                        Enter the student's details to check
+                        whether the credential exists in the system.
+                    </p>
+                </div>
 
-                <p>Roll No:</p>
-                <input
-                    name="Rollno"
-                    value={verifyData.Rollno}
-                    onChange={handlevChange}
-                    placeholder="input Roll no"
-                />
+                <form
+                    className="verify-form"
+                    onSubmit={handleSubmit}
+                >
 
-                <p>Degree:</p>
-                <input
-                    name="degree"
-                    value={verifyData.degree}
-                    onChange={handlevChange}
-                    placeholder="input Degree"
-                />
+                    <div className="form-group">
+                        <label htmlFor="verify-name">
+                            Student Name
+                        </label>
 
-                <p>Branch:</p>
-                <input
-                    name="branch"
-                    value={verifyData.branch}
-                    onChange={handlevChange}
-                    placeholder="input Branch"
-                />
+                        <input
+                            id="verify-name"
+                            name="name"
+                            value={verifyData.name}
+                            onChange={handleChange}
+                            placeholder="Oasis Poudel"
+                            required
+                        />
+                    </div>
 
-                <p>Graduation Year:</p>
-                <input
-                    name="gyear"
-                    value={verifyData.gyear}
-                    onChange={handlevChange}
-                    placeholder="input year"
-                />
 
-                <button type="submit">Verify</button>
+                    <div className="form-group">
+                        <label htmlFor="verify-roll">
+                            Roll Number
+                        </label>
 
-            </form>
+                        <input
+                            id="verify-roll"
+                            name="Rollno"
+                            value={verifyData.Rollno}
+                            onChange={handleChange}
+                            placeholder="124CS0138"
+                            required
+                        />
+                    </div>
+
+
+                    <div className="form-group">
+                        <label htmlFor="verify-degree">
+                            Degree
+                        </label>
+
+                        <input
+                            id="verify-degree"
+                            name="degree"
+                            value={verifyData.degree}
+                            onChange={handleChange}
+                            placeholder="B.Tech"
+                        />
+                    </div>
+
+
+                    <div className="form-group">
+                        <label htmlFor="verify-branch">
+                            Branch
+                        </label>
+
+                        <input
+                            id="verify-branch"
+                            name="branch"
+                            value={verifyData.branch}
+                            onChange={handleChange}
+                            placeholder="Computer Science"
+                        />
+                    </div>
+
+
+                    <div className="form-group">
+                        <label htmlFor="verify-year">
+                            Graduation Year
+                        </label>
+
+                        <input
+                            id="verify-year"
+                            name="gyear"
+                            value={verifyData.gyear}
+                            onChange={handleChange}
+                            placeholder="2028"
+                        />
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        className="verify-button"
+                        disabled={loading}
+                    >
+                        {loading ? "Checking..." : "Verify Credential"}
+                    </button>
+
+                </form>
+
+            </div>
+
 
             {verificationResult === "notfound" && (
-                <p>Credentials not found</p>
+                <div className="verification-result invalid">
+                    <div className="result-icon">×</div>
+
+                    <div>
+                        <h3>Credential Not Found</h3>
+
+                        <p>
+                            No credential matching the supplied
+                            student details was found.
+                        </p>
+                    </div>
+                </div>
             )}
 
-            {verificationResult &&
-                verificationResult !== "notfound" && (
+
+            {verificationResult === "error" && (
+                <div className="verification-result invalid">
+                    <div className="result-icon">!</div>
+
                     <div>
-                        <p>Credentials found</p>
-                        <CredentialCard data={verificationResult} />
+                        <h3>Verification Failed</h3>
+
+                        <p>
+                            Could not connect to the credential server.
+                            Make sure the backend is running.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+
+            {verificationResult &&
+                verificationResult !== "notfound" &&
+                verificationResult !== "error" && (
+
+                    <div className="verification-success">
+
+                        <div className="verification-result valid">
+
+                            <div className="result-icon">
+                                ✓
+                            </div>
+
+                            <div>
+                                <h3>Credential Verified</h3>
+
+                                <p>
+                                    A matching academic credential
+                                    was found in the system.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <CredentialCard
+                            data={verificationResult}
+                        />
+
                     </div>
                 )}
 
