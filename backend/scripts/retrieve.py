@@ -4,7 +4,7 @@ from ape import accounts, project
 account = accounts.load("meta_mask")
 
 contract_address = ""  # use from .env
-contract = project.Store.at(contract_address)
+contract = project.store.at(contract_address)
 
 
 def load_hash(val):
