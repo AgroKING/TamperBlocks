@@ -1,9 +1,10 @@
 # TODO : Fetch required event from blockchain
 from ape import accounts, project
-
+from scripts.deploy import main as deployed
 account = accounts.load("meta_mask")
 
-contract_address = ""  # use from .env
+get_contract= deployed()# deployed address
+contract_address = get_contract.address
 contract = project.store.at(contract_address)
 
 
