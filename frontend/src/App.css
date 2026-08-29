@@ -1,0 +1,975 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   Shared Design System & Global Variables
+   ========================================================================== */
+:root {
+    --navy-dark: #0f213d;
+    --navy-button: #132847;
+    --gold-accent: #c59b27;
+    --bg-page: #f2f4f7;
+    --bg-card: #ffffff;
+    --bg-input: #f8fafc;
+    --border-input: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --radius-card: 16px;
+    --radius-input: 8px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg-page);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   1. University Portal Page (Uni Component)
+   ========================================================================== */
+.university-page {
+    min-height: 100vh;
+    background-color: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 1.5rem;
+}
+
+.university-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.university-header::before {
+    content: "ADMINISTRATION";
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.university-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.75rem;
+    font-weight: 600;
+    color: var(--navy-dark);
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+}
+
+.university-header p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.university-content {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.university-welcome {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.university-welcome h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--navy-dark);
+    margin: 0 0 0.5rem 0;
+}
+
+.university-welcome p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.university-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.portal-action-card {
+    background: var(--bg-card);
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-card);
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.portal-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1);
+}
+
+.action-icon {
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(197, 155, 39, 0.4);
+    color: var(--gold-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.75rem;
+    background-color: rgba(197, 155, 39, 0.05);
+}
+
+.portal-action-card h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--navy-dark);
+    margin: 0 0 0.75rem 0;
+}
+
+.portal-action-card p {
+    color: var(--text-muted);
+    font-size: 0.925rem;
+    line-height: 1.6;
+    margin: 0 0 2.5rem 0;
+    flex-grow: 1;
+}
+
+.issue-credential-button,
+.lookup-credential-button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #ffffff;
+    background-color: var(--navy-button);
+    border: none;
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+    margin-top: auto;
+}
+
+.issue-credential-button::after,
+.lookup-credential-button::after {
+    content: "→";
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.issue-credential-button:hover,
+.lookup-credential-button:hover {
+    background-color: #0b1a30;
+}
+
+.issue-credential-button:hover::after,
+.lookup-credential-button:hover::after {
+    transform: translateX(4px);
+}
+
+/* ==========================================================================
+   2. Issue Academic Credential Page & Split Layout
+   ========================================================================== */
+.issue-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+}
+
+.issue-container {
+    display: flex;
+    max-width: 980px;
+    width: 100%;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 850px) {
+    .issue-container {
+        flex-direction: column;
+    }
+}
+
+.issue-card {
+    background: var(--bg-card);
+    flex: 1.1;
+    padding: 3rem 2.5rem;
+}
+
+.issue-header {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.issue-header::before {
+    content: "NEW CREDENTIAL";
+    display: block;
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.issue-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: var(--navy-dark);
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+}
+
+.issue-header p {
+    color: var(--text-muted);
+    font-size: 0.925rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.issue-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+@media (max-width: 520px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--navy-dark);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.925rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-input);
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #a0aec0;
+}
+
+.form-group input:focus {
+    background-color: #ffffff;
+    border-color: var(--navy-dark);
+    box-shadow: 0 0 0 3px rgba(15, 33, 61, 0.08);
+}
+
+.issue-button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--navy-button);
+    border: none;
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+    margin-top: 0.75rem;
+}
+
+.issue-button::after {
+    content: "→";
+    font-size: 1.1rem;
+}
+
+.issue-button:hover {
+    background-color: #0b1a30;
+}
+
+/* Trust Sidebar */
+.trust-panel {
+    background-color: var(--navy-dark);
+    color: #ffffff;
+    flex: 0.9;
+    padding: 3.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.diamond-icon {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(197, 155, 39, 0.4);
+    color: var(--gold-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.trust-panel .eyebrow {
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.trust-panel h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.02em;
+}
+
+.trust-panel .description {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0 0 1.75rem 0;
+}
+
+.trust-panel .divider {
+    width: 40px;
+    height: 2px;
+    background-color: var(--gold-accent);
+    margin-bottom: 1.75rem;
+}
+
+.trust-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.trust-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+}
+
+.trust-list .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--gold-accent);
+}
+
+.trust-footer {
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Success & Error State */
+.error-message {
+    margin-top: 1.25rem;
+    padding: 0.875rem;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: var(--radius-input);
+    font-size: 0.875rem;
+}
+
+.success-card {
+    background: var(--navy-dark);
+    color: #ffffff;
+    width: 100%;
+    max-width: 540px;
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-card);
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.2);
+    margin-top: 2.5rem;
+}
+
+.success-icon {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(197, 155, 39, 0.4);
+    color: var(--gold-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.success-card h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.85rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.success-message {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.credential-info {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.info-item span {
+    color: #94a3b8;
+}
+
+.info-item strong {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.info-item strong.hash {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.info-item strong.status {
+    color: #34d399;
+}
+
+.qr-placeholder {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-input);
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.verify-button {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid var(--gold-accent);
+    color: var(--gold-accent);
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.verify-button:hover {
+    background-color: var(--gold-accent);
+    color: var(--navy-dark);
+}
+
+/* ==========================================================================
+   Lookup Page & Component Styles
+   ========================================================================== */
+.lookup-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+}
+
+.lookup-container {
+    display: flex;
+    max-width: 980px;
+    width: 100%;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 850px) {
+    .lookup-container {
+        flex-direction: column;
+    }
+}
+
+.lookup-card {
+    background: var(--bg-card);
+    flex: 1.1;
+    padding: 3rem 2.5rem;
+}
+
+.lookup-header {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.lookup-header::before {
+    content: "SEARCH RECORDS";
+    display: block;
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.lookup-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: var(--navy-dark);
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+}
+
+.lookup-header p {
+    color: var(--text-muted);
+    font-size: 0.925rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.lookup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.lookup-button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--navy-button);
+    border: none;
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+    margin-top: 0.75rem;
+}
+
+.lookup-button::after {
+    content: "→";
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.lookup-button:hover {
+    background-color: #0b1a30;
+}
+
+.lookup-button:hover::after {
+    transform: translateX(4px);
+}
+
+.lookup-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Error Banner */
+.lookup-error {
+    margin-top: 1.5rem;
+    padding: 0.875rem 1.25rem;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: var(--radius-input);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Success Result Container */
+.lookup-result {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-input);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lookup-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #047857;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+/* ==========================================================================
+   Verification Page & Results Styling
+   ========================================================================== */
+.verification-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+}
+
+.verification-container {
+    display: flex;
+    max-width: 980px;
+    width: 100%;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 850px) {
+    .verification-container {
+        flex-direction: column;
+    }
+}
+
+.verification-card {
+    background: var(--bg-card);
+    flex: 1.1;
+    padding: 3rem 2.5rem;
+}
+
+.verification-header {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.verification-header::before {
+    content: "INSTITUTIONAL AUDIT";
+    display: block;
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.verification-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: var(--navy-dark);
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+}
+
+.verification-header p {
+    color: var(--text-muted);
+    font-size: 0.925rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.verification-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.verification-button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--navy-button);
+    border: none;
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+    margin-top: 0.75rem;
+}
+
+.verification-button::after {
+    content: "→";
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.verification-button:hover {
+    background-color: #0b1a30;
+}
+
+.verification-button:hover::after {
+    transform: translateX(4px);
+}
+
+.verification-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.verification-error {
+    margin-top: 1.5rem;
+    padding: 0.875rem 1.25rem;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: var(--radius-input);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Result Card Box */
+.verification-result {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-input);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.verification-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #047857;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.775rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+}
+
+.verification-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.verification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+.verification-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.verification-item span {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.verification-item strong {
+    color: var(--navy-dark);
+    font-weight: 600;
+}
+
+.verification-item strong.verified-status {
+    color: #059669;
+    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+}
+
+/* ==============================
+   Home Page
+   ============================== */
+
+.home-page {
+    min-height: 100vh;
+    padding: 5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.home-header {
+    text-align: center;
+    max-width: 750px;
+    margin-bottom: 4rem;
+}
+
+.home-eyebrow {
+    color: var(--gold-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
+.home-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--navy-dark);
+    font-size: 3.2rem;
+    line-height: 1.15;
+    margin: 1rem 0;
+}
+
+.home-header p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.home-actions {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.home-action-card {
+    background: var(--bg-card);
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+}
+
+.home-action-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(197, 155, 39, 0.4);
+    color: var(--gold-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.home-action-card h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--navy-dark);
+    margin-bottom: 0.75rem;
+}
+
+.home-action-card p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    min-height: 3.2rem;
+    margin-bottom: 2rem;
+}
+
+.home-button {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: none;
+    border-radius: var(--radius-input);
+    background: var(--navy-button);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-button:hover {
+    background: #0b1a30;
+}
+
+@media (max-width: 700px) {
+
+    .home-header h1 {
+        font-size: 2.4rem;
+    }
+
+    .home-actions {
+        grid-template-columns: 1fr;
+    }
+
+}

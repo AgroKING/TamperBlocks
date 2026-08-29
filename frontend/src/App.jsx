@@ -1,33 +1,55 @@
-import CredentialCard from "./credcard";
-import Issue from "./issue";
-import Verify from "./verify";
-import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { Home } from "./pages/home";
+import { Uni } from "./pages/uni";
+import Issue from "./pages/issue";
+import Lookup from "./pages/lookup";
+import Verify from "./pages/verify";
+import "./App.css";
+
 function App() {
+
     const [data, setdata] = useState({
+        student_id: "",
         name: "",
-        Rollno: "",
         degree: "",
-        branch: "",
-        gyear: ""
-    })
-    const [page, setpage] = useState("home")
-    const [credential, setCredential] = useState(null);
+        major: "",
+        gpa: "",
+        issuing_institution: ""
+    });
 
     return (
-        <div>
-            <h1><b>ACADEMIC CREDENTIAL SYSTEM</b></h1>
-            <button onClick={() => setpage("issue")}>Issue Credential</button><br /> <br />
-            <button onClick={() => setpage("verify")}>Verify credential</button>
-            {page === "issue" && <Issue data={data} setdata={setdata} />}
-            <br />  <br />
-            {page === "issue" && <CredentialCard data={data} />}
-            {page === "verify" && <Verify />}
-            <br />  <br />
+        <BrowserRouter>
 
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route
+                    path="/university"
+                    element={<Uni />}
+                />
 
+                <Route
+                    path="/university/issue"
+                    element={
+                        <Issue
+                            data={data}
+                            setdata={setdata}
+                        />
+                    }
+                />
 
-        </div>
+                <Route
+                    path="/university/lookup"
+                    element={<Lookup />}
+                />
+                <Route
+                    path="/institution"
+                    element={<Verify />}
+                />
+            </Routes>
+
+        </BrowserRouter>
     );
 }
 
-export default App
+export default App;

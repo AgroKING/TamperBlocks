@@ -15,6 +15,27 @@
       "branch": "1",
       "gyear": "1",
       "id": "UEE8Ez9LEZ0"
+    },
+    {
+      "student_id": "",
+      "name": "ishan",
+      "degree": "125CS0175",
+      "major": "",
+      "gpa": "",
+      "issuing_institution": "",
+      "Rollno": "1234",
+      "branch": "CSE",
+      "gyear": "2026",
+      "id": "1tEK9zvAm-E"
+    },
+    {
+      "student_id": "1234",
+      "name": "Ishan Kharel",
+      "degree": "125CS0175",
+      "major": "CSE",
+      "gpa": "8.4",
+      "issuing_institution": "NIT Rourkela (Rourkela)",
+      "id": "xRshZgUAn4I"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
