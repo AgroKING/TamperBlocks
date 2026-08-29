@@ -26,6 +26,9 @@ event CertificateAnchored:
     block_index: uint256
     timestamp: uint256
 
+# CID mapped to Hash
+cid_to_hash : public(HashMap[String[100],bytes32])
+
 # Event emitted when a certificate is revoked
 event CertificateRevoked:
     target_hash: indexed(bytes32)
@@ -40,10 +43,10 @@ def __init__():
 def anchor_certificate(target_hash: bytes32, ipfs_cid: String[100], issuer_signature: Bytes[65]):
     assert msg.sender == self.owner, "Only the owner can anchor certificates"
     assert not self.certificates[target_hash].exists, "Certificate already exists"
-    
+
     current_index: uint256 = self.certificate_count + 1
     self.certificate_count = current_index
-    
+
     self.certificates[target_hash] = CertificateRecord(
         ipfs_cid=ipfs_cid,
         issuer_signature=issuer_signature,
@@ -52,7 +55,8 @@ def anchor_certificate(target_hash: bytes32, ipfs_cid: String[100], issuer_signa
         timestamp=block.timestamp,
         exists=True
     )
-    
+    self.cid_to_hash[ipfs_cid] = target_hash
+
     log CertificateAnchored(target_hash, ipfs_cid, issuer_signature, current_index, block.timestamp)
 
 @external
@@ -60,9 +64,9 @@ def revoke_certificate(target_hash: bytes32):
     assert msg.sender == self.owner, "Only the owner can revoke certificates"
     assert self.certificates[target_hash].exists, "Certificate does not exist"
     assert not self.certificates[target_hash].revoked, "Certificate is already revoked"
-    
+
     self.certificates[target_hash].revoked = True
-    
+
     log CertificateRevoked(target_hash, block.timestamp)
 
 @external
@@ -70,3 +74,10 @@ def revoke_certificate(target_hash: bytes32):
 def is_revoked(target_hash: bytes32) -> bool:
     assert self.certificates[target_hash].exists, "Certificate does not exist"
     return self.certificates[target_hash].revoked
+
+@external
+@view
+def get_certificate_by_cid(ipfs_cid: String[100]) -> CertificateRecord:
+    target_hash: bytes32 = self.cid_to_hash[ipfs_cid]
+    assert target_hash != empty(bytes32), "No certificate found for this CID"
+    return self.certificates[target_hash]
