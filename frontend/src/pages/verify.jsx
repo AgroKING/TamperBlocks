@@ -2,7 +2,6 @@ import { useState } from "react";
 
 function Verify() {
     const [studentId, setStudentId] = useState("");
-    const [credentialHash, setCredentialHash] = useState("");
 
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
@@ -10,10 +9,6 @@ function Verify() {
 
     function handleStudentIdChange(event) {
         setStudentId(event.target.value);
-    }
-
-    function handleHashChange(event) {
-        setCredentialHash(event.target.value);
     }
 
     async function handleSubmit(event) {
@@ -24,19 +19,30 @@ function Verify() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:8000/verify/" + credentialHash
-            );
+            const response = await fetch("http://localhost:3000/credentials");
 
             if (!response.ok) {
-                throw new Error("Credential not found");
+                throw new Error("Unable to connect to the database.");
             }
 
             const data = await response.json();
 
-            setResult(data);
-        } catch (error) {
-            setError("Credential could not be verified. Please check the hash.");
+            // Search for matching student_id (case-insensitive)
+            const matchedCredential = Array.isArray(data)
+                ? data.find(
+                    (item) =>
+                        item.student_id &&
+                        String(item.student_id).trim().toLowerCase() === studentId.trim().toLowerCase()
+                )
+                : null;
+
+            if (!matchedCredential) {
+                throw new Error("No credential found for this Student ID.");
+            }
+
+            setResult(matchedCredential);
+        } catch (err) {
+            setError(err.message || "No credential found for this Student ID.");
         } finally {
             setLoading(false);
         }
@@ -69,17 +75,6 @@ function Verify() {
                                 value={studentId}
                                 onChange={handleStudentIdChange}
                                 placeholder="e.g. CS101"
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Credential Hash</label>
-                            <input
-                                type="text"
-                                value={credentialHash}
-                                onChange={handleHashChange}
-                                placeholder="e.g. 0x8f3a..."
                                 required
                             />
                         </div>

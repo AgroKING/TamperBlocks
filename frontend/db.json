@@ -36,6 +36,33 @@
       "gpa": "8.4",
       "issuing_institution": "NIT Rourkela (Rourkela)",
       "id": "xRshZgUAn4I"
+    },
+    {
+      "student_id": "1234",
+      "name": "Kalpana Chauhan",
+      "degree": "B.Tech",
+      "major": "CSE",
+      "gpa": "10",
+      "issuing_institution": "NIT Rourkela (Rourkela)",
+      "id": "ihjpCf4wTYM"
+    },
+    {
+      "student_id": "12345",
+      "name": "Kalpana Chauhan",
+      "degree": "B.Tech",
+      "major": "CSE",
+      "gpa": "10",
+      "issuing_institution": "NIT Rourkela (Rourkela)",
+      "id": "qFunt0g4W3M"
+    },
+    {
+      "student_id": "125CS0175",
+      "name": "Ranchoddas chanchad",
+      "degree": "B.Tech",
+      "major": "Mechanical",
+      "gpa": "10",
+      "issuing_institution": "NIT Rourkela (Rourkela)",
+      "id": "H6Rbs6RNeQo"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

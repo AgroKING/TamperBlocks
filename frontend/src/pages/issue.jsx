@@ -21,6 +21,40 @@ function Issue({ data, setdata }) {
         setLoading(true);
 
         try {
+            // Check for an existing credential with the same Student ID or Name first
+            const existingResponse = await fetch("http://localhost:3000/credentials");
+
+            if (!existingResponse.ok) {
+                throw new Error("Unable to verify existing records. Please try again.");
+            }
+
+            const existingCredentials = await existingResponse.json();
+            const credentialsList = Array.isArray(existingCredentials) ? existingCredentials : [];
+
+            const duplicateId = credentialsList.find(
+                (item) =>
+                    item.student_id &&
+                    String(item.student_id).trim().toLowerCase() === data.student_id.trim().toLowerCase()
+            );
+
+            if (duplicateId) {
+                throw new Error(
+                    `A credential already exists for Student ID "${data.student_id}". Each student can only have one credential on record.`
+                );
+            }
+
+            const duplicateName = credentialsList.find(
+                (item) =>
+                    item.name &&
+                    String(item.name).trim().toLowerCase() === data.name.trim().toLowerCase()
+            );
+
+            if (duplicateName) {
+                throw new Error(
+                    `A credential already exists for the name "${data.name}" (Student ID "${duplicateName.student_id}"). Please double-check the details before issuing.`
+                );
+            }
+
             const response = await fetch(
                 "http://localhost:3000/credentials",
                 {
@@ -50,7 +84,7 @@ function Issue({ data, setdata }) {
 
         } catch (error) {
             console.error(error);
-            setIssueError("Credential could not be issued. Please try again.");
+            setIssueError(error.message || "Credential could not be issued. Please try again.");
         }
 
         setLoading(false);
