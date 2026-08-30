@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from typing import Dict, Any
 from pydantic import BaseModel
 from utils.blockchain import blockchain_manager
+from utils.credgen import issue_credential_pdf
 from utils.services import (
     issue_new_certificate,
     verify_certificate_by_hash,
@@ -83,6 +84,14 @@ def get_system_status_endpoint():
         return get_system_status()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Status check failed: {str(e)}")
+
+@app.post("/generate-pdf", response_model=Dict[str, Any])
+def generate_pdf(metadata: StudentMetadata):
+    """
+    Receives credential data from the frontend form, generates a PDF,
+    hashes it, and stores the record.
+    """
+    return issue_credential_pdf(metadata.model_dump())
 
 
 if __name__ == "__main__":
