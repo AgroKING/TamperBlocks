@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import BlurText from "../components/BlurText";
 import bgImage from "../components/image.png";
 
 export function Uni() {
@@ -9,7 +10,13 @@ export function Uni() {
             <img src={bgImage} alt="" className="university-bg-image" />
 
             <div className="university-header">
-                <h1>University Portal</h1>
+                <BlurText
+                    as="h1"
+                    text="University Portal"
+                    delay={50}
+                    animateBy="words"
+                    direction="bottom"
+                />
                 <p>
                     Manage and verify academic credentials
                 </p>

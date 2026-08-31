@@ -10,6 +10,8 @@ import Revoke from "./pages/revoke";
 import Verify from "./pages/verify";
 import BlockchainStatus from "./pages/BlockchainStatus";
 
+import { Navigation } from "./components/Navigation";
+
 import "./App.css";
 
 function App() {
@@ -25,7 +27,7 @@ function App() {
 
     return (
         <BrowserRouter>
-
+            <Navigation />
             <Routes>
 
                 {/* HOME */}

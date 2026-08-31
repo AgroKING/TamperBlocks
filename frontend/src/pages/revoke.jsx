@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../services/api";
+import BlurText from "../components/BlurText";
 
 function Revoke() {
     const [credentialId, setCredentialId] = useState("");
@@ -58,7 +59,7 @@ function Revoke() {
                             CREDENTIAL ADMINISTRATION
                         </span>
 
-                        <h1>Revoke Credential</h1>
+                        <BlurText as="h1" text="Revoke Credential" delay={50} />
 
                         <p>
                             Mark an existing academic credential as

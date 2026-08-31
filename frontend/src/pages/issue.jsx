@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
+import BlurText from "../components/BlurText";
 
 function Issue({ data, setdata }) {
     const navigate = useNavigate();
@@ -51,7 +52,7 @@ function Issue({ data, setdata }) {
                 {/* LEFT FORM CARD */}
                 <div className="issue-card">
                     <div className="issue-header">
-                        <h1>Issue Academic Credential</h1>
+                        <BlurText as="h1" text="Issue Academic Credential" delay={50} />
                         <p>
                             Enter the student's academic information below to create a verifiable record.
                         </p>

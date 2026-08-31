@@ -12,6 +12,8 @@
   "dependencies": {
     "@tsparticles/react": "^4.3.2",
     "@tsparticles/slim": "^4.3.2",
+    "framer-motion": "^13.1.1",
+    "motion": "^13.1.1",
     "ogl": "^1.0.11",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../services/api";
+import BlurText from "../components/BlurText";
 
 function Verify() {
     const [targetHash, setTargetHash] = useState("");
@@ -37,7 +38,7 @@ function Verify() {
                 <div className="verification-card">
 
                     <div className="verification-header">
-                        <h1>Institution Verification Portal</h1>
+                        <BlurText as="h1" text="Institution Verification Portal" delay={50} />
                         <p>
                             Verify the authenticity of an academic
                             credential recorded on the blockchain.

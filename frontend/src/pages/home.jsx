@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import BlurText from "../components/BlurText";
 
 export function Home() {
     const navigate = useNavigate();
@@ -206,11 +207,15 @@ export function Home() {
                         Team OmniCoded
                     </span>
 
-                    <h1>
-                        Academic Credential
-                        <br />
-                        Verification System
-                    </h1>
+                    <div className="home-header-title" style={{margin: '0 0 1.25rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <BlurText
+                            text="Academic Credential Verification System"
+                            delay={100}
+                            animateBy="words"
+                            direction="bottom"
+                            className="blur-title"
+                        />
+                    </div>
 
                     <p className="hero-subtitle">
                         Secure, tamper-proof academic credentials

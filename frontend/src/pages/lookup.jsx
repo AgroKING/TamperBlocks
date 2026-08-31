@@ -1,6 +1,7 @@
 import { useState } from "react";
 import CredentialCard from "../components/credcard";
 import { api } from "../services/api";
+import BlurText from "../components/BlurText";
 
 function Lookup() {
     const [studentId, setStudentId] = useState("");
@@ -53,7 +54,7 @@ function Lookup() {
 
                     <div className="lookup-header">
                         <span className="eyebrow">VERIFICATION PORTAL</span>
-                        <h1>Lookup Credential</h1>
+                        <BlurText as="h1" text="Lookup Credential" delay={50} />
                         <p>
                             Query the database to inspect and verify authentic academic credentials.
                         </p>
