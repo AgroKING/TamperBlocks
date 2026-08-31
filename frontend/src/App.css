@@ -727,6 +727,15 @@ body {
     position: relative;
 }
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.blockchain-chain::-webkit-scrollbar {
+    display: none;
+}
+
 /* thin teal scan-line accent along the top edge, reinforces "authentication in progress" */
 .verification-card::before {
     content: "";
@@ -1007,12 +1016,12 @@ body {
 }
 
 .home-container {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 4rem;
-    max-width: 1280px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1400px;
     width: 100%;
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
     position: relative;
     z-index: 1;
     align-items: center;
@@ -1020,15 +1029,17 @@ body {
 
 @media (max-width: 950px) {
     .home-container {
-        grid-template-columns: 1fr;
-        gap: 3rem;
+        padding: 2rem 1rem;
     }
 }
 
-/* Left Column Styling */
+/* Header Styling */
 .home-header {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 900px;
 }
 
 .home-eyebrow {
@@ -1041,7 +1052,7 @@ body {
     display: inline-block;
 }
 
-.home-header h1 {
+.home-header h1, .blur-title {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 3.25rem;
     font-weight: 700;
@@ -1055,30 +1066,21 @@ body {
     font-size: 1.15rem;
     color: var(--navy-dark, #0f213d);
     font-weight: 500;
-    margin: 0 0 2.5rem 0;
+    margin: 0 0 2rem 0;
 }
 
 .blockchain-editorial {
     position: relative;
-    padding-left: 1.75rem;
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(12px);
-    border-radius: 0 12px 12px 0;
-    padding-top: 0.85rem;
-    padding-bottom: 0.85rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
 }
 
 .editorial-divider {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(to bottom, var(--gold-accent, #c59b27), transparent);
-    border-radius: 4px;
+    display: none;
 }
 
 .blockchain-editorial p {
@@ -1096,9 +1098,22 @@ body {
    5. Home Action Cards (High Contrast & Distinct Elevation)
    ========================================================================== */
 .home-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .home-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .home-actions {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Base Card Shell - Solid Opaque White with Soft Gradients */
