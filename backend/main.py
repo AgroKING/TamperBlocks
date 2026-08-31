@@ -78,9 +78,18 @@ def lookup_credential(student_id: str):
 @app.get("/status", response_model=dict[str, Any])
 def get_system_status_endpoint():
     try:
+        from utils.services import get_system_status
         return get_system_status()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Status check failed: {e!s}")
+
+@app.get("/blocks", response_model=list[dict[str, Any]])
+def get_blocks_endpoint():
+    try:
+        from utils.services import get_all_blocks
+        return get_all_blocks()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch blocks: {e!s}")
 
 @app.post("/generate-pdf", response_model=dict[str, Any])
 def generate_pdf(metadata: StudentMetadata):

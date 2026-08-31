@@ -5,19 +5,24 @@ import SideRays from '../components/SideRays';
 function BlockchainStatus() {
 
     const [status, setStatus] = useState(null);
+    const [blocks, setBlocks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        api.getStatus()
-            .then((data) => {
-                setStatus(data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                setError(err.message);
-                setLoading(false);
-            });
+        Promise.all([
+            api.getStatus(),
+            api.getBlocks().catch(() => []) // if it fails, default to empty
+        ])
+        .then(([statusData, blocksData]) => {
+            setStatus(statusData);
+            setBlocks(blocksData);
+            setLoading(false);
+        })
+        .catch((err) => {
+            setError(err.message);
+            setLoading(false);
+        });
     }, []);
 
     return (
@@ -97,6 +102,7 @@ function BlockchainStatus() {
                 </div>
 
                 <div className="blockchain-chain">
+                    {/* The Genesis/Contract Block */}
                     <div className="block-wrapper">
                         <div className="block-node">
                             <span>CONTRACT</span>
@@ -127,6 +133,42 @@ function BlockchainStatus() {
                             </div>
                         </div>
                     </div>
+
+                    {/* The actual certificate blocks */}
+                    {blocks.map((block, i) => (
+                        <div className="block-wrapper" key={block.hash}>
+                            <div className="block-node">
+                                <span>BLOCK</span>
+                                <strong>#{block.block_index}</strong>
+                            </div>
+                            <div className="block-card" style={block.revoked ? {borderLeft: '4px solid #ef4444'} : {borderLeft: '4px solid #22c55e'}}>
+                                <div className="block-card-header" style={block.revoked ? {backgroundColor: '#fee2e2', color: '#b91c1c'} : {}}>
+                                    <span>CERTIFICATE RECORD</span>
+                                    <span className={block.revoked ? "block-invalid" : "block-valid"} style={block.revoked ? {color: '#ef4444'} : {}}>
+                                        ● {block.revoked ? "REVOKED" : "VALID"}
+                                    </span>
+                                </div>
+                                <div className="block-data">
+                                    <div>
+                                        <span>STUDENT ID</span>
+                                        <code>{block.student_id}</code>
+                                    </div>
+                                    <div>
+                                        <span>TARGET HASH</span>
+                                        <code style={{fontSize: '10px'}}>{block.hash}</code>
+                                    </div>
+                                    <div>
+                                        <span>IPFS CID</span>
+                                        <code style={{fontSize: '10px'}}>{block.cid}</code>
+                                    </div>
+                                    <div>
+                                        <span>TIMESTAMP</span>
+                                        <strong>{new Date(block.timestamp * 1000).toLocaleString()}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
             </section>

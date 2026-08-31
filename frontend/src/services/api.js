@@ -42,6 +42,12 @@ export const api = {
         return res.json();
     },
 
+    async getBlocks() {
+        const res = await fetch(`${API_BASE}/blocks`);
+        if (!res.ok) throw new Error('Failed to fetch blocks');
+        return res.json();
+    },
+
     async lookupByStudentId(studentId) {
         const res = await fetch(`${API_BASE}/lookup/${encodeURIComponent(studentId)}`);
         if (!res.ok) {

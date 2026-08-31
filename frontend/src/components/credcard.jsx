@@ -7,9 +7,11 @@ export default function CredentialCard({ data = {} }) {
     return (
         <div style={cardStyles.card}>
             {/* Top Banner */}
-            <div style={cardStyles.header}>
+            <div style={{...cardStyles.header, backgroundColor: data.revoked ? '#7f1d1d' : '#0f172a'}}>
                 <span style={cardStyles.institution}>UNIVERSITY ACADEMIC CREDENTIAL</span>
-                <span style={cardStyles.statusBadge}>OFFICIAL</span>
+                <span style={{...cardStyles.statusBadge, backgroundColor: data.revoked ? '#ef4444' : '#22c55e', color: data.revoked ? '#fff' : '#000'}}>
+                    {data.revoked ? 'REVOKED' : 'OFFICIAL'}
+                </span>
             </div>
 
             {/* Main Body */}
@@ -42,9 +44,11 @@ export default function CredentialCard({ data = {} }) {
             </div>
 
             {/* Card Footer */}
-            <div style={cardStyles.footer}>
-                <span>STATUS: VERIFIED</span>
-                <span>ISSUED: {new Date().toLocaleDateString()}</span>
+            <div style={{...cardStyles.footer, backgroundColor: data.revoked ? '#fee2e2' : '#f1f5f9'}}>
+                <span style={{color: data.revoked ? '#ef4444' : '#64748b', fontWeight: '800'}}>
+                    STATUS: {data.revoked ? 'REVOKED' : 'VERIFIED'}
+                </span>
+                <span>ISSUED: {data.timestamp ? new Date(data.timestamp * 1000).toLocaleDateString() : new Date().toLocaleDateString()}</span>
             </div>
         </div>
     );

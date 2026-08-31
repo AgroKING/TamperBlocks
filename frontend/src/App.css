@@ -630,22 +630,27 @@ body {
 .info-item {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     font-size: 0.875rem;
+    gap: 1rem;
 }
 
 .info-item span {
     color: #94a3b8;
+    flex-shrink: 0;
 }
 
 .info-item strong {
     color: #ffffff;
     font-weight: 500;
+    text-align: right;
 }
 
 .info-item strong.hash {
     font-family: monospace;
     font-size: 0.8rem;
     color: #cbd5e1;
+    word-break: break-all;
 }
 
 .info-item strong.status {
@@ -1119,6 +1124,16 @@ body {
     border-top: 4px solid var(--navy-dark, #0f213d);
 }
 
+.card-blockchain {
+    border-top: 4px solid #0d9488;
+}
+
+.badge-teal {
+    background: rgba(13, 148, 136, 0.12);
+    color: #0f766e;
+    border: 1px solid rgba(13, 148, 136, 0.3);
+}
+
 /* Card Hover States */
 .home-action-card:hover {
     transform: translateY(-8px) scale(1.01);
@@ -1192,6 +1207,12 @@ body {
     border: 1px solid rgba(15, 33, 61, 0.2);
 }
 
+.icon-teal {
+    background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, rgba(13, 148, 136, 0.05) 100%);
+    color: #0d9488;
+    border: 1px solid rgba(13, 148, 136, 0.25);
+}
+
 .home-action-icon svg {
     width: 32px;
     height: 32px;
@@ -1255,6 +1276,17 @@ body {
 .button-navy:hover {
     background: var(--navy-dark, #0f213d);
     color: #ffffff;
+}
+
+.button-teal {
+    background: #0f766e;
+    color: #ffffff;
+    border: 1px solid #0f766e;
+}
+
+.button-teal:hover {
+    background: #0d9488;
+    border-color: #0d9488;
 }
 
 .home-button:hover span {
@@ -2127,19 +2159,18 @@ body {
 
 .blockchain-chain {
     display: flex;
-
     align-items: stretch;
-
     gap: 0;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scrollbar-color: rgba(96, 165, 250, 0.4) rgba(15, 23, 42, 0.5);
+    scrollbar-width: thin;
 }
 
 .block-wrapper {
-    flex: 1;
-
+    flex: 0 0 420px;
     position: relative;
-
     display: flex;
-
     flex-direction: column;
 }
 
@@ -2168,6 +2199,18 @@ body {
     font-size: 0.55rem;
 
     align-self: center;
+    position: relative;
+}
+
+.block-wrapper:not(:last-child) .block-node::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 350px;
+    height: 2px;
+    background: rgba(96, 165, 250, 0.4);
+    z-index: 0;
 }
 
 .block-node strong {

@@ -20,10 +20,25 @@ function Lookup() {
         setLoading(true);
 
         try {
-            const result = await api.lookupByStudentId(studentId);
+            let result;
+            if (studentId.startsWith("0x")) {
+                const verifyRes = await api.verifyCertificate(studentId);
+                if (!verifyRes.metadata) {
+                    throw new Error("Credential metadata not found on-chain.");
+                }
+                result = {
+                    metadata: verifyRes.metadata,
+                    target_hash: studentId,
+                    ipfs_cid: verifyRes.verification_details?.ipfs_cid,
+                    revoked: !verifyRes.verification_details?.not_revoked,
+                    timestamp: verifyRes.verification_details?.timestamp
+                };
+            } else {
+                result = await api.lookupByStudentId(studentId);
+            }
             setCredential(result);
         } catch (err) {
-            setError(err.message || "No credential found for this Student ID.");
+            setError(err.message || "No credential found.");
         } finally {
             setLoading(false);
         }
@@ -47,16 +62,16 @@ function Lookup() {
                     <form className="lookup-form" onSubmit={handleSubmit}>
 
                         <div className="form-group">
-                            <label htmlFor="student_id">Student ID</label>
+                            <label htmlFor="student_id">Student ID or Certificate Hash</label>
                             <div className="input-wrapper">
-                                <span className="input-icon">🆔</span>
+                                <span className="input-icon">🔍</span>
                                 <input
                                     id="student_id"
                                     type="text"
                                     name="student_id"
                                     value={studentId}
                                     onChange={handleChange}
-                                    placeholder="e.g. CS101"
+                                    placeholder="e.g. CS101 or 0x..."
                                     required
                                 />
                             </div>
@@ -90,13 +105,19 @@ function Lookup() {
 
                     {credential && (
                         <div className="lookup-result">
-                            <div className="lookup-success">
-                                <span className="success-icon">✓</span> Credential Found & Verified
+                            <div className="lookup-success" style={credential.revoked ? {backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5'} : {}}>
+                                {credential.revoked ? (
+                                    <><span className="success-icon" style={{backgroundColor: '#ef4444'}}>❌</span> Credential Found but is REVOKED</>
+                                ) : (
+                                    <><span className="success-icon">✓</span> Credential Found & Verified</>
+                                )}
                             </div>
                             <CredentialCard data={{
                                 ...credential.metadata,
                                 target_hash: credential.target_hash,
-                                ipfs_cid: credential.ipfs_cid
+                                ipfs_cid: credential.ipfs_cid,
+                                revoked: credential.revoked,
+                                timestamp: credential.timestamp
                             }} />
                         </div>
                     )}

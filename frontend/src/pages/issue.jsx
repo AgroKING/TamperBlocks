@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 
 function Issue({ data, setdata }) {
-
+    const navigate = useNavigate();
     const [issuedCredential, setIssuedCredential] = useState(null);
     const [issueError, setIssueError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -212,12 +213,18 @@ function Issue({ data, setdata }) {
                         </div>
                     </div>
 
-                    <div className="qr-placeholder">
-                        <div>QR</div>
-                        <p>QR code will appear here</p>
+                    <div className="qr-container" style={{textAlign: 'center', margin: '2rem 0'}}>
+                        <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${issuedCredential.credential_hash}`} 
+                            alt="Verification QR Code" 
+                            style={{borderRadius: '8px', padding: '10px', background: 'white', display: 'inline-block'}}
+                        />
+                        <p style={{color: '#94a3b8', fontSize: '0.85rem', marginTop: '10px', margin: '10px 0 0 0'}}>
+                            Scan to retrieve Certificate Hash
+                        </p>
                     </div>
 
-                    <button className="verify-button" onClick={() => console.log("Go to verification")}>
+                    <button className="verify-button" onClick={() => navigate("/institution")}>
                         Verify Credential
                     </button>
                 </div>
