@@ -1,43 +1,48 @@
-# TODO: Fetch required event from blockchain
+import json
+import os
+
 from ape import accounts, project
-from deploy import main as deployed
-
-from utils.crypto import canonicalize_json, hash_canonical_json, sign_hash
-
-account = accounts.test_accounts[0]  # relayer/owner — pays gas, submits tx
-
-get_contract = deployed()  # deployed contract instance
-contract_address = get_contract.address
-contract = project.store.at(contract_address)
+import warnings
+#warnings.filterwarnings("ignore")
 
 
-def build_certificate_payload(certificate_data: dict, ipfs_cid: str):
-    """
-    Canonicalizes + hashes certificate_data, signs it with the issuer key,
-    and returns the tuple anchor_certificate expects.
-    """
-    canonical = canonicalize_json(certificate_data)
-    target_hash = hash_canonical_json(canonical)
-    issuer_signature = sign_hash(target_hash)
-    return [target_hash, ipfs_cid, issuer_signature]
+def main():
+    args = json.loads(os.environ["SCRIPT_ARGS"])
+    command = args[0]
+    contract_address = args[-1]
 
+    account = accounts.test_accounts[0]
+    contract = project.store.at(contract_address)
 
-def load_hash(val):
-    tx_receipt = contract.anchor_certificate(*val, sender=account)
-    events = list(tx_receipt.decode_logs(project.Store.CertificateAnchored))
-    if events:
-        print(f"Success! The new issue is: {events[0].target_hash}")
+    if command == "get_certificate":
+        target_hash_hex = args[1]
+        target_hash = bytes.fromhex(target_hash_hex.replace("0x", ""))
 
+        record = contract.certificates(target_hash)
+        # CertificateRecord struct: (ipfs_cid, issuer_signature, block_index, revoked, timestamp, exists)
+        result = {
+            "ipfs_cid": record[0],
+            "issuer_signature": "0x" + record[1].hex(),
+            "block_index": record[2],
+            "revoked": record[3],
+            "timestamp": record[4],
+            "exists": record[5],
+        }
+        print(json.dumps(result))
 
-def get_hash(CID):
-    return contract.cid_to_hash(CID)
+    elif command == "get_issuer":
+        issuer = contract.issuer()
+        print(json.dumps({"issuer": issuer}))
 
+    elif command == "get_status":
+        owner = contract.owner()
+        issuer = contract.issuer()
+        certificate_count = contract.certificate_count()
+        print(json.dumps({
+            "owner": owner,
+            "issuer": issuer,
+            "certificate_count": certificate_count,
+        }))
 
-def get_certificate(CID):
-    return contract.get_certificate_by_cid(CID)
-
-
-# Example usage:
-# certificate_data = {"student": "Jane Doe", "degree": "B.Tech CSE", "year": 2026}
-# val = build_certificate_payload(certificate_data, ipfs_cid="Qm...")
-# load_hash(val)
+    else:
+        print(json.dumps({"error": f"Unknown command: {command}"}))
