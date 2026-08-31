@@ -5,7 +5,7 @@ from eth_account import Account
 from eth_account.messages import encode_defunct
 
 # Deterministic private key representing the University/Issuer
-ISSUER_PRIVATE_KEY = "0x8f2a55949038a9610f502c38f5d94d9303a4666cfb2f0a501a0efc6fa4f4fc32"
+ISSUER_PRIVATE_KEY = "0x" + hashlib.sha256(b"University Issuer Seed").hexdigest()
 issuer_account = Account.from_key(ISSUER_PRIVATE_KEY)
 
 def canonicalize_json(data: Dict[str, Any]) -> str:
