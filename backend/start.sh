@@ -2,7 +2,7 @@
 set -e
 
 # 1. Start a local Foundry chain in the background
-anvil --host 0.0.0.0 --port 8545 &
+anvil --host 127.0.0.1 --port 8545 &
 ANVIL_PID=$!
 
 # Give it a moment to come up
