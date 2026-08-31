@@ -239,6 +239,91 @@ body {
 }
 
 /* ==========================================================================
+   University Portal - Three Card Layout
+   ========================================================================== */
+
+.university-actions {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Revoke card */
+
+.revoke-action-card::before {
+    background: linear-gradient(90deg,
+            #c24141,
+            transparent 80%);
+}
+
+.revoke-action-card:hover {
+    border-color: rgba(194, 65, 65, 0.35);
+}
+
+.revoke-action-icon {
+    color: #c24141;
+    border-color: rgba(194, 65, 65, 0.35);
+    background-color: rgba(194, 65, 65, 0.05);
+}
+
+.revoke-action-card:hover .revoke-action-icon {
+    background-color: rgba(194, 65, 65, 0.1);
+    border-color: rgba(194, 65, 65, 0.55);
+}
+
+.revoke-credential-button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    color: #ffffff;
+    background-color: #7f2929;
+
+    border: none;
+    border-radius: var(--radius-input);
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    transition: background-color 0.2s ease;
+
+    margin-top: auto;
+}
+
+.revoke-credential-button::after {
+    content: "→";
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.revoke-credential-button:hover {
+    background-color: #671f1f;
+}
+
+.revoke-credential-button:hover::after {
+    transform: translateX(4px);
+}
+
+
+/* Responsive layout */
+
+@media (max-width: 900px) {
+    .university-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .university-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
    2. Issue Academic Credential Page & Split Layout
    ========================================================================== */
 .issue-page {
@@ -1502,4 +1587,756 @@ body {
     color: #64748b;
     line-height: 1.5;
     margin: 0;
+}
+
+/* ==========================================================================
+   Revoke Credential Page
+   ========================================================================== */
+
+.revoke-page {
+    min-height: 100vh;
+    padding: 4rem 1.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at 10% 20%,
+            rgba(194, 65, 65, 0.08),
+            transparent 40%),
+        var(--bg-page);
+}
+
+.revoke-container {
+    width: 100%;
+    max-width: 980px;
+
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+
+    background: var(--bg-card);
+
+    border-radius: var(--radius-card);
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 60px -20px rgba(15, 23, 42, 0.16);
+}
+
+.revoke-card {
+    padding: 3rem;
+}
+
+.revoke-header {
+    margin-bottom: 2.5rem;
+}
+
+.revoke-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #c24141;
+    background: rgba(194, 65, 65, 0.07);
+
+    border: 1px solid rgba(194, 65, 65, 0.25);
+
+    margin-bottom: 1.5rem;
+}
+
+.revoke-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.revoke-eyebrow {
+    display: block;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+
+    color: #c24141;
+
+    margin-bottom: 0.7rem;
+}
+
+.revoke-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+
+    font-size: 2.3rem;
+    color: var(--navy-dark);
+
+    margin: 0 0 0.75rem;
+}
+
+.revoke-header p {
+    color: var(--text-muted);
+
+    font-size: 0.925rem;
+    line-height: 1.6;
+
+    max-width: 600px;
+
+    margin: 0;
+}
+
+.revoke-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.revoke-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.revoke-form-group label {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--navy-dark);
+}
+
+.revoke-form-group input,
+.revoke-form-group select {
+    width: 100%;
+
+    padding: 0.9rem 1rem;
+
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-input);
+
+    background: var(--bg-input);
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+
+    outline: none;
+}
+
+.revoke-form-group input:focus,
+.revoke-form-group select:focus {
+    border-color: #c24141;
+
+    box-shadow:
+        0 0 0 3px rgba(194, 65, 65, 0.08);
+
+    background: white;
+}
+
+.revoke-input-help {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.revoke-warning {
+    display: flex;
+    gap: 1rem;
+
+    padding: 1rem;
+
+    background: rgba(194, 65, 65, 0.06);
+
+    border: 1px solid rgba(194, 65, 65, 0.18);
+
+    border-radius: var(--radius-input);
+}
+
+.revoke-warning-icon {
+    width: 26px;
+    height: 26px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: white;
+    background: #c24141;
+
+    font-weight: 700;
+}
+
+.revoke-warning strong {
+    color: #8b2e2e;
+    font-size: 0.85rem;
+}
+
+.revoke-warning p {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.5;
+
+    margin: 0.3rem 0 0;
+}
+
+.revoke-submit-button {
+    width: 100%;
+
+    padding: 1rem;
+
+    border: none;
+    border-radius: var(--radius-input);
+
+    background: #7f2929;
+    color: white;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.revoke-submit-button:hover {
+    background: #671f1f;
+}
+
+.revoke-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.revoke-info-panel {
+    padding: 3rem;
+
+    background: #28191b;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.revoke-panel-eyebrow {
+    color: #e07171;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+
+    margin-bottom: 1rem;
+}
+
+.revoke-info-panel h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+
+    font-size: 2.1rem;
+
+    margin: 0 0 1rem;
+}
+
+.revoke-info-panel>p {
+    color: #c7aeb0;
+
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.revoke-divider {
+    width: 40px;
+    height: 2px;
+
+    background: #c24141;
+
+    margin: 1.5rem 0;
+}
+
+.revoke-info-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.revoke-info-panel li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+
+    color: #eadfe0;
+
+    font-size: 0.85rem;
+}
+
+.revoke-info-panel li span {
+    color: #e07171;
+}
+
+.revoke-result {
+    margin-top: 1.5rem;
+
+    display: flex;
+    gap: 1rem;
+
+    padding: 1rem;
+
+    border-radius: var(--radius-input);
+
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.revoke-result-icon {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.revoke-result strong {
+    font-size: 0.85rem;
+}
+
+.revoke-result p {
+    margin: 0.3rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+@media (max-width: 750px) {
+    .revoke-container {
+        grid-template-columns: 1fr;
+    }
+
+    .revoke-info-panel {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Blockchain Status - Space / Technology Theme
+   ========================================================================== */
+
+.blockchain-page {
+    position: relative;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    padding: 5rem 2rem;
+
+    color: #e5edf8;
+
+    background:
+        radial-gradient(circle at 50% 0%,
+            rgba(65, 111, 180, 0.22),
+            transparent 35%),
+        radial-gradient(circle at 10% 80%,
+            rgba(86, 67, 155, 0.16),
+            transparent 30%),
+        #050914;
+}
+
+/* subtle space grid */
+
+.blockchain-page::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.25;
+
+    background-image:
+        linear-gradient(rgba(120, 160, 220, 0.05) 1px,
+            transparent 1px),
+        linear-gradient(90deg,
+            rgba(120, 160, 220, 0.05) 1px,
+            transparent 1px);
+
+    background-size: 50px 50px;
+}
+
+.blockchain-header,
+.blockchain-stats,
+.chain-section,
+.blockchain-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.blockchain-header {
+    max-width: 900px;
+
+    margin: 0 auto 3rem;
+
+    text-align: center;
+}
+
+.blockchain-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 0.2em;
+
+    color: #78a9e8;
+}
+
+.blockchain-header h1 {
+    margin: 0.8rem 0;
+
+    font-family: 'Playfair Display', Georgia, serif;
+
+    font-size: 3rem;
+
+    color: #f4f8ff;
+}
+
+.blockchain-header p {
+    margin: 0;
+
+    color: #8796ad;
+
+    font-size: 0.95rem;
+}
+
+.network-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.6rem;
+
+    margin-top: 1.5rem;
+
+    padding: 0.55rem 1rem;
+
+    border: 1px solid rgba(96, 165, 250, 0.2);
+
+    border-radius: 999px;
+
+    background: rgba(96, 165, 250, 0.06);
+
+    color: #8fc1ff;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #55d88b;
+
+    box-shadow: 0 0 12px rgba(85, 216, 139, 0.8);
+}
+
+
+/* Stats */
+
+.blockchain-stats {
+    max-width: 900px;
+
+    margin: 0 auto 4rem;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 1rem;
+}
+
+.blockchain-stat {
+    padding: 1.2rem;
+
+    border: 1px solid rgba(148, 163, 184, 0.12);
+
+    border-radius: 12px;
+
+    background: rgba(12, 20, 37, 0.7);
+
+    backdrop-filter: blur(10px);
+}
+
+.blockchain-stat span {
+    display: block;
+
+    margin-bottom: 0.4rem;
+
+    color: #64748b;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+
+    letter-spacing: 0.1em;
+}
+
+.blockchain-stat strong {
+    color: #dbeafe;
+
+    font-size: 1rem;
+}
+
+
+/* Chain */
+
+.chain-section {
+    max-width: 1100px;
+
+    margin: auto;
+}
+
+.chain-title {
+    margin-bottom: 2rem;
+}
+
+.chain-title span {
+    color: #638ec4;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+
+    letter-spacing: 0.15em;
+}
+
+.chain-title h2 {
+    margin: 0.4rem 0 0;
+
+    font-family: 'Playfair Display', Georgia, serif;
+
+    font-size: 1.8rem;
+
+    color: #f1f5f9;
+}
+
+.blockchain-chain {
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 0;
+}
+
+.block-wrapper {
+    flex: 1;
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.block-node {
+    width: 70px;
+    height: 70px;
+
+    margin-bottom: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid rgba(96, 165, 250, 0.4);
+
+    border-radius: 50%;
+
+    background: #0b1426;
+
+    box-shadow:
+        0 0 25px rgba(65, 120, 200, 0.12);
+
+    color: #79aef0;
+
+    font-size: 0.55rem;
+
+    align-self: center;
+}
+
+.block-node strong {
+    color: #e2e8f0;
+
+    font-size: 0.9rem;
+}
+
+.block-card {
+    padding: 1.3rem;
+
+    margin: 0 0.4rem;
+
+    border: 1px solid rgba(148, 163, 184, 0.14);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(145deg,
+            rgba(19, 31, 53, 0.95),
+            rgba(8, 14, 27, 0.95));
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.block-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 1.2rem;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.block-valid {
+    color: #54cf8a;
+}
+
+.block-data {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.9rem;
+}
+
+.block-data span {
+    display: block;
+
+    margin-bottom: 0.3rem;
+
+    color: #64748b;
+
+    font-size: 0.58rem;
+
+    letter-spacing: 0.08em;
+}
+
+.block-data code {
+    display: block;
+
+    overflow: hidden;
+
+    color: #93c5fd;
+
+    font-family: monospace;
+
+    font-size: 0.68rem;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.block-data strong {
+    color: #e2e8f0;
+}
+
+.chain-link {
+    position: absolute;
+
+    top: 35px;
+
+    left: 100%;
+
+    width: 20px;
+
+    height: 2px;
+
+    background: rgba(96, 165, 250, 0.35);
+
+    z-index: -1;
+}
+
+.blockchain-footer {
+    max-width: 700px;
+
+    margin: 3rem auto 0;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 0.78rem;
+}
+
+.blockchain-footer span {
+    color: #6da5eb;
+
+    margin-right: 0.5rem;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .blockchain-chain {
+        flex-direction: column;
+
+        gap: 1.5rem;
+    }
+
+    .block-wrapper {
+        width: 100%;
+    }
+
+    .block-node {
+        align-self: flex-start;
+    }
+
+    .chain-link {
+        display: none;
+    }
+
+    .blockchain-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+
+    .blockchain-page {
+        padding: 3rem 1rem;
+    }
+
+    .blockchain-header h1 {
+        font-size: 2.3rem;
+    }
+
+    .blockchain-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* SideRays background layer */
+.blockchain-rays {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Ensure the space grid stays behind the rays */
+.blockchain-page::before {
+    z-index: 0;
 }

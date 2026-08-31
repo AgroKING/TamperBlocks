@@ -1,10 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
+
 import { Home } from "./pages/home";
 import { Uni } from "./pages/uni";
+
 import Issue from "./pages/issue";
 import Lookup from "./pages/lookup";
+import Revoke from "./pages/revoke";
 import Verify from "./pages/verify";
+import BlockchainStatus from "./pages/BlockchainStatus";
+
 import "./App.css";
 
 function App() {
@@ -22,7 +27,14 @@ function App() {
         <BrowserRouter>
 
             <Routes>
-                <Route path="/" element={<Home />} />
+
+                {/* HOME */}
+                <Route
+                    path="/"
+                    element={<Home />}
+                />
+
+                {/* UNIVERSITY PORTAL */}
                 <Route
                     path="/university"
                     element={<Uni />}
@@ -42,10 +54,26 @@ function App() {
                     path="/university/lookup"
                     element={<Lookup />}
                 />
+
+                <Route
+                    path="/university/revoke"
+                    element={<Revoke />}
+                />
+
+
+                {/* INSTITUTION VERIFICATION */}
                 <Route
                     path="/institution"
                     element={<Verify />}
                 />
+
+
+                {/* BLOCKCHAIN */}
+                <Route
+                    path="/blockchain"
+                    element={<BlockchainStatus />}
+                />
+
             </Routes>
 
         </BrowserRouter>

@@ -3,6 +3,7 @@ import bgImage from "../components/image.png";
 
 export function Uni() {
     const navigate = useNavigate();
+
     return (
         <div className="university-page">
             <img src={bgImage} alt="" className="university-bg-image" />
@@ -19,17 +20,23 @@ export function Uni() {
                 <div className="university-welcome">
                     <h2>Credential Management</h2>
                     <p>
-                        Issue new academic credentials or look up
-                        existing credentials.
+                        Issue, lookup, or revoke academic credentials.
                     </p>
                 </div>
 
                 <div className="university-actions">
 
+                    {/* ISSUE CREDENTIAL */}
                     <div className="portal-action-card">
+
                         <div className="action-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M12 5V19M5 12H19"
+                                    stroke="currentColor"
+                                    strokeWidth="1.75"
+                                    strokeLinecap="round"
+                                />
                             </svg>
                         </div>
 
@@ -46,14 +53,28 @@ export function Uni() {
                         >
                             Issue Credentials
                         </button>
+
                     </div>
 
 
+                    {/* LOOKUP CREDENTIAL */}
                     <div className="portal-action-card">
+
                         <div className="action-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" strokeWidth="1.75" />
-                                <path d="M20 20L15.2 15.2" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <circle
+                                    cx="10.5"
+                                    cy="10.5"
+                                    r="6.5"
+                                    stroke="currentColor"
+                                    strokeWidth="1.75"
+                                />
+                                <path
+                                    d="M20 20L15.2 15.2"
+                                    stroke="currentColor"
+                                    strokeWidth="1.75"
+                                    strokeLinecap="round"
+                                />
                             </svg>
                         </div>
 
@@ -70,6 +91,39 @@ export function Uni() {
                         >
                             Lookup Credentials
                         </button>
+
+                    </div>
+
+
+                    {/* REVOKE CREDENTIAL */}
+                    <div className="portal-action-card revoke-action-card">
+
+                        <div className="action-icon revoke-action-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M6 6L18 18M18 6L6 18"
+                                    stroke="currentColor"
+                                    strokeWidth="1.75"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+                        </div>
+
+                        <h3>Revoke Credential</h3>
+
+                        <p>
+                            Permanently mark an issued credential
+                            as revoked and prevent it from being
+                            considered valid.
+                        </p>
+
+                        <button
+                            className="revoke-credential-button"
+                            onClick={() => navigate("/university/revoke")}
+                        >
+                            Revoke Credential
+                        </button>
+
                     </div>
 
                 </div>
@@ -79,3 +133,5 @@ export function Uni() {
         </div>
     );
 }
+
+export default Uni;
