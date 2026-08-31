@@ -1,14 +1,15 @@
 import { useState } from "react";
+import { api } from "../services/api";
 
 function Verify() {
-    const [studentId, setStudentId] = useState("");
+    const [targetHash, setTargetHash] = useState("");
 
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     function handleStudentIdChange(event) {
-        setStudentId(event.target.value);
+        setTargetHash(event.target.value);
     }
 
     async function handleSubmit(event) {
@@ -19,30 +20,10 @@ function Verify() {
         setLoading(true);
 
         try {
-            const response = await fetch("http://localhost:3000/credentials");
-
-            if (!response.ok) {
-                throw new Error("Unable to connect to the database.");
-            }
-
-            const data = await response.json();
-
-            // Search for matching student_id (case-insensitive)
-            const matchedCredential = Array.isArray(data)
-                ? data.find(
-                    (item) =>
-                        item.student_id &&
-                        String(item.student_id).trim().toLowerCase() === studentId.trim().toLowerCase()
-                )
-                : null;
-
-            if (!matchedCredential) {
-                throw new Error("No credential found for this Student ID.");
-            }
-
-            setResult(matchedCredential);
+            const result = await api.verifyCertificate(targetHash);
+            setResult(result);
         } catch (err) {
-            setError(err.message || "No credential found for this Student ID.");
+            setError(err.message || "No credential found for this Certificate Hash.");
         } finally {
             setLoading(false);
         }
@@ -69,12 +50,12 @@ function Verify() {
                     >
 
                         <div className="form-group">
-                            <label>Student ID</label>
+                            <label>Certificate Hash</label>
                             <input
                                 type="text"
-                                value={studentId}
+                                value={targetHash}
                                 onChange={handleStudentIdChange}
-                                placeholder="e.g. CS101"
+                                placeholder="e.g. 0x3a7b..."
                                 required
                             />
                         </div>
@@ -98,50 +79,73 @@ function Verify() {
                     {result && (
                         <div className="verification-result">
 
-                            <div className="verification-success">
-                                ✓ CREDENTIAL VERIFIED
+                            <div className={result.verified ? "verification-success" : "verification-error"}>
+                                {result.verified ? "✓ CREDENTIAL VERIFIED" : "✗ VERIFICATION FAILED"}
                             </div>
 
-                            <div className="verification-details">
-
-                                <div className="verification-item">
-                                    <span>Student ID</span>
-                                    <strong>{studentId}</strong>
+                            {result.reasons && result.reasons.length > 0 && (
+                                <div className="verification-reasons">
+                                    {result.reasons.map((r, i) => <p key={i}>{r}</p>)}
                                 </div>
+                            )}
 
-                                <div className="verification-item">
-                                    <span>Student</span>
-                                    <strong>{result.name}</strong>
+                            {result.verification_details && (
+                                <div className="verification-details">
+                                    <div className="verification-item">
+                                        <span>Ledger Anchored</span>
+                                        <strong>{result.verification_details.ledger_anchored ? "✓ Yes" : "✗ No"}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Block Index</span>
+                                        <strong>{result.verification_details.block_index}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>IPFS CID</span>
+                                        <strong>{result.verification_details.ipfs_cid}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Integrity Check</span>
+                                        <strong>{result.verification_details.integrity_check_passed ? "✓ Passed" : "✗ Failed"}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Signature Check</span>
+                                        <strong>{result.verification_details.signature_check_passed ? "✓ Passed" : "✗ Failed"}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Revocation Status</span>
+                                        <strong>{result.verification_details.not_revoked ? "✓ Active" : "✗ Revoked"}</strong>
+                                    </div>
                                 </div>
+                            )}
 
-                                <div className="verification-item">
-                                    <span>Degree</span>
-                                    <strong>{result.degree}</strong>
+                            {result.metadata && (
+                                <div className="verification-details">
+                                    <div className="verification-item">
+                                        <span>Student</span>
+                                        <strong>{result.metadata.name}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Student ID</span>
+                                        <strong>{result.metadata.student_id}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Degree</span>
+                                        <strong>{result.metadata.degree}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Major</span>
+                                        <strong>{result.metadata.major}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>GPA</span>
+                                        <strong>{result.metadata.gpa}</strong>
+                                    </div>
+                                    <div className="verification-item">
+                                        <span>Institution</span>
+                                        <strong>{result.metadata.issuing_institution}</strong>
+                                    </div>
                                 </div>
-
-                                <div className="verification-item">
-                                    <span>Major</span>
-                                    <strong>{result.major}</strong>
-                                </div>
-
-                                <div className="verification-item">
-                                    <span>GPA</span>
-                                    <strong>{result.gpa}</strong>
-                                </div>
-
-                                <div className="verification-item">
-                                    <span>Blockchain Status</span>
-                                    <strong className="verified-status">
-                                        VERIFIED
-                                    </strong>
-                                </div>
-
-                                <div className="verification-item">
-                                    <span>Issued At</span>
-                                    <strong>{result.issued_at}</strong>
-                                </div>
-
-                            </div>
+                            )}
 
                         </div>
                     )}

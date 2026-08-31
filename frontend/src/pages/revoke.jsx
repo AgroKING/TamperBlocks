@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../services/api";
 
 function Revoke() {
     const [credentialId, setCredentialId] = useState("");
@@ -6,23 +7,31 @@ function Revoke() {
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
 
         setLoading(true);
         setResult(null);
 
-        // Temporary frontend mock.
-        // Backend will handle the actual revocation later.
-        setTimeout(() => {
+        try {
+            const response = await api.revokeCertificate(credentialId, reason);
             setResult({
                 credential_id: credentialId,
-                status: "REVOCATION_PENDING",
-                reason: reason
+                status: "REVOKED",
+                reason: reason,
+                transaction_hash: response.transaction_hash,
+                message: response.message
             });
+        } catch (error) {
+            setResult({
+                credential_id: credentialId,
+                status: "FAILED",
+                reason: reason,
+                error: error.message
+            });
+        }
 
-            setLoading(false);
-        }, 800);
+        setLoading(false);
     }
 
     return (
@@ -68,7 +77,7 @@ function Revoke() {
                         <div className="revoke-form-group">
 
                             <label>
-                                Credential ID
+                                Certificate Hash
                             </label>
 
                             <input
@@ -77,13 +86,12 @@ function Revoke() {
                                 onChange={(event) =>
                                     setCredentialId(event.target.value)
                                 }
-                                placeholder="e.g. 8f92a7c1..."
+                                placeholder="e.g. 0x3a7b..."
                                 required
                             />
 
                             <span className="revoke-input-help">
-                                Enter the ID of the credential you
-                                want to revoke.
+                                Enter the certificate hash to revoke.
                             </span>
 
                         </div>
@@ -164,16 +172,18 @@ function Revoke() {
                         <div className="revoke-result">
 
                             <div className="revoke-result-icon">
-                                ✓
+                                {result.status === "REVOKED" ? "✓" : "✗"}
                             </div>
 
                             <div>
                                 <strong>
-                                    Revocation Request Recorded
+                                    {result.status === "REVOKED"
+                                        ? "Certificate Revoked Successfully"
+                                        : "Revocation Failed"}
                                 </strong>
 
                                 <p>
-                                    Credential ID:{" "}
+                                    Certificate Hash:{" "}
                                     <span>
                                         {result.credential_id}
                                     </span>
@@ -185,6 +195,21 @@ function Revoke() {
                                         {result.status}
                                     </strong>
                                 </p>
+
+                                {result.transaction_hash && (
+                                    <p>
+                                        Transaction:{" "}
+                                        <span style={{fontFamily: 'monospace', fontSize: '12px'}}>
+                                            {result.transaction_hash}
+                                        </span>
+                                    </p>
+                                )}
+
+                                {result.error && (
+                                    <p style={{color: '#ef4444'}}>
+                                        Error: {result.error}
+                                    </p>
+                                )}
                             </div>
 
                         </div>

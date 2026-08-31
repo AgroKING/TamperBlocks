@@ -1,37 +1,24 @@
+import { useState, useEffect } from "react";
+import { api } from "../services/api";
 import SideRays from '../components/SideRays';
 
 function BlockchainStatus() {
 
-    const blocks = [
-        {
-            number: 0,
-            hash: "0000a91f...",
-            previousHash: "GENESIS",
-            credentials: 0,
-            status: "GENESIS"
-        },
-        {
-            number: 1,
-            hash: "00008f42...",
-            previousHash: "0000a91f...",
-            credentials: 3,
-            status: "VALID"
-        },
-        {
-            number: 2,
-            hash: "0000c721...",
-            previousHash: "00008f42...",
-            credentials: 5,
-            status: "VALID"
-        },
-        {
-            number: 3,
-            hash: "0000e194...",
-            previousHash: "0000c721...",
-            credentials: 2,
-            status: "VALID"
-        }
-    ];
+    const [status, setStatus] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        api.getStatus()
+            .then((data) => {
+                setStatus(data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                setError(err.message);
+                setLoading(false);
+            });
+    }, []);
 
     return (
         <div className="blockchain-page">
@@ -70,7 +57,7 @@ function BlockchainStatus() {
 
                 <div className="network-status">
                     <span className="status-dot"></span>
-                    NETWORK OPERATIONAL
+                    {loading ? "CONNECTING..." : error ? "CONNECTION ERROR" : "NETWORK OPERATIONAL"}
                 </div>
 
             </header>
@@ -80,111 +67,70 @@ function BlockchainStatus() {
 
                 <div className="blockchain-stat">
                     <span>NETWORK</span>
-                    <strong>ACTIVE</strong>
+                    <strong>{status ? status.network : "—"}</strong>
                 </div>
 
                 <div className="blockchain-stat">
-                    <span>BLOCKS</span>
-                    <strong>{blocks.length}</strong>
+                    <span>STATUS</span>
+                    <strong>{status ? status.status.toUpperCase() : "—"}</strong>
                 </div>
 
                 <div className="blockchain-stat">
-                    <span>CONSENSUS</span>
-                    <strong>VALID</strong>
+                    <span>CERTIFICATES</span>
+                    <strong>{status ? status.total_certificates_anchored : "—"}</strong>
                 </div>
 
                 <div className="blockchain-stat">
-                    <span>INTEGRITY</span>
-                    <strong>100%</strong>
+                    <span>CONTRACT</span>
+                    <strong style={{fontSize: '11px', fontFamily: 'monospace'}}>{status ? status.contract_address : "—"}</strong>
                 </div>
 
             </section>
 
 
+            {status && (
             <section className="chain-section">
 
                 <div className="chain-title">
                     <span>LIVE LEDGER</span>
-                    <h2>Blockchain Structure</h2>
+                    <h2>Contract Details</h2>
                 </div>
 
-
                 <div className="blockchain-chain">
-
-                    {blocks.map((block, index) => (
-
-                        <div
-                            className="block-wrapper"
-                            key={block.number}
-                        >
-
-                            <div className="block-node">
-                                <span>
-                                    BLOCK
-                                </span>
-
-                                <strong>
-                                    #{block.number}
-                                </strong>
-                            </div>
-
-
-                            <div className="block-card">
-
-                                <div className="block-card-header">
-
-                                    <span>
-                                        BLOCK #{block.number}
-                                    </span>
-
-                                    <span className="block-valid">
-                                        ● {block.status}
-                                    </span>
-
-                                </div>
-
-
-                                <div className="block-data">
-
-                                    <div>
-                                        <span>HASH</span>
-                                        <code>
-                                            {block.hash}
-                                        </code>
-                                    </div>
-
-                                    <div>
-                                        <span>PREVIOUS HASH</span>
-                                        <code>
-                                            {block.previousHash}
-                                        </code>
-                                    </div>
-
-                                    <div>
-                                        <span>CREDENTIALS</span>
-                                        <strong>
-                                            {block.credentials}
-                                        </strong>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            {index < blocks.length - 1 && (
-                                <div className="chain-link">
-                                    <span></span>
-                                </div>
-                            )}
-
+                    <div className="block-wrapper">
+                        <div className="block-node">
+                            <span>CONTRACT</span>
+                            <strong>INFO</strong>
                         </div>
-
-                    ))}
-
+                        <div className="block-card">
+                            <div className="block-card-header">
+                                <span>SMART CONTRACT</span>
+                                <span className="block-valid">● DEPLOYED</span>
+                            </div>
+                            <div className="block-data">
+                                <div>
+                                    <span>CONTRACT ADDRESS</span>
+                                    <code>{status.contract_address}</code>
+                                </div>
+                                <div>
+                                    <span>OWNER</span>
+                                    <code>{status.owner_address}</code>
+                                </div>
+                                <div>
+                                    <span>ISSUER</span>
+                                    <code>{status.issuer_address}</code>
+                                </div>
+                                <div>
+                                    <span>TOTAL ANCHORED</span>
+                                    <strong>{status.total_certificates_anchored}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </section>
+            )}
 
 
             <div className="blockchain-footer">
