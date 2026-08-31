@@ -27,6 +27,23 @@ def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
     if existing.get("exists"):
         raise HTTPException(status_code=400, detail="Certificate target hash already anchored on-chain")
 
+    student_id = metadata_dict.get("student_id", "")
+    if student_id:
+        from utils.ipfs import _load_ipfs_db
+        db = _load_ipfs_db()
+        for cid, metadata in db.items():
+            if metadata.get("student_id", "").strip().lower() == student_id.strip().lower():
+                check_canonical = canonicalize_json(metadata)
+                check_hash = hash_canonical_json(check_canonical)
+                check_hash_hex = "0x" + check_hash.hex()
+                
+                check_existing = run_ape_script("retrieve", ["get_certificate", check_hash_hex, CONTRACT_ADDRESS])
+                if check_existing.get("exists") and not check_existing.get("revoked"):
+                    raise HTTPException(
+                        status_code=400, 
+                        detail=f"An active certificate already exists for Student ID '{student_id}'. Revoke it first before issuing a new one."
+                    )
+
     signature = sign_hash(target_hash)
     signature_hex = "0x" + signature.hex()
 
@@ -158,19 +175,43 @@ def lookup_by_student_id(student_id: str) -> Dict[str, Any]:
     from utils.crypto import canonicalize_json, hash_canonical_json
 
     db = _load_ipfs_db()
+    
+    best_match = None
+    
     for cid, metadata in db.items():
         if metadata.get("student_id", "").strip().lower() == student_id.strip().lower():
             # Recompute the target_hash from the metadata
             canonical = canonicalize_json(metadata)
             target_hash = hash_canonical_json(canonical)
             target_hash_hex = "0x" + target_hash.hex()
-            return {
+            
+            match_data = {
                 "found": True,
                 "student_id": metadata["student_id"],
                 "target_hash": target_hash_hex,
                 "ipfs_cid": cid,
                 "metadata": metadata
             }
+            
+            # Check on-chain status
+            check_existing = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+            
+            match_data["revoked"] = check_existing.get("revoked", False)
+            match_data["timestamp"] = check_existing.get("timestamp", 0)
+            
+            if check_existing.get("exists") and not check_existing.get("revoked"):
+                # Active certificate found! Return it immediately.
+                return match_data
+            elif check_existing.get("exists"):
+                # Revoked certificate. Save it as fallback in case no active one exists.
+                best_match = match_data
+            elif not best_match:
+                # Not on chain at all, just a fallback
+                best_match = match_data
+
+    if best_match:
+        return best_match
+        
     raise HTTPException(status_code=404, detail=f"No certificate found for student ID: {student_id}")
 
 
@@ -185,5 +226,37 @@ def get_system_status() -> Dict[str, Any]:
         "owner_address": status["owner"],
         "issuer_address": status["issuer"],
         "total_certificates_anchored": status["certificate_count"],
-        "network": "local-eth-tester"
+        "network": "local-foundry"
     }
+
+def get_all_blocks() -> list[Dict[str, Any]]:
+    from utils.ipfs import _load_ipfs_db
+    from utils.crypto import canonicalize_json, hash_canonical_json
+
+    db = _load_ipfs_db()
+    blocks = []
+    
+    for cid, metadata in db.items():
+        canonical = canonicalize_json(metadata)
+        target_hash = hash_canonical_json(canonical)
+        target_hash_hex = "0x" + target_hash.hex()
+        
+        # Check on-chain status
+        try:
+            on_chain = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+            if on_chain.get("exists"):
+                blocks.append({
+                    "hash": target_hash_hex,
+                    "cid": cid,
+                    "student_id": metadata.get("student_id"),
+                    "name": metadata.get("name"),
+                    "timestamp": on_chain.get("timestamp"),
+                    "revoked": on_chain.get("revoked"),
+                    "block_index": on_chain.get("block_index")
+                })
+        except Exception:
+            pass
+
+    # Sort by block index
+    blocks.sort(key=lambda x: x["block_index"])
+    return blocks
