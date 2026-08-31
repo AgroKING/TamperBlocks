@@ -1,6 +1,6 @@
-import subprocess
 import json
 import os
+import subprocess
 
 APE_PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")  # utils/ -> backend/

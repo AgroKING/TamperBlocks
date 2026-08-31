@@ -1,14 +1,15 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-from utils.ipfs import IPFS_DB_FILE, _load_ipfs_db, _save_ipfs_db
-from utils.blockchain import blockchain_manager
+from utils.ipfs import _load_ipfs_db, _save_ipfs_db
+
 
 @pytest.fixture(scope="module")
 def client():
     # Context manager triggers the FastAPI startup event
     with TestClient(app) as c:
         yield c
+
 
 def test_system_status(client):
     response = client.get("/status")
@@ -19,6 +20,7 @@ def test_system_status(client):
     assert data["issuer_address"] is not None
     assert data["total_certificates_anchored"] == 0
 
+
 def test_issue_and_verify_lifecycle(client):
     student_data = {
         "student_id": "STU12345",
@@ -26,7 +28,7 @@ def test_issue_and_verify_lifecycle(client):
         "degree": "Bachelor of Science",
         "major": "Computer Science",
         "gpa": 3.95,
-        "issuing_institution": "AgroKING University"
+        "issuing_institution": "AgroKING University",
     }
 
     # 1. Issue the certificate
@@ -34,11 +36,11 @@ def test_issue_and_verify_lifecycle(client):
     assert issue_response.status_code == 200
     issue_data = issue_response.json()
     assert issue_data["status"] == "success"
-    
+
     target_hash = issue_data["target_hash"]
     ipfs_cid = issue_data["ipfs_cid"]
     signature = issue_data["issuer_signature"]
-    
+
     assert target_hash.startswith("0x")
     assert ipfs_cid.startswith("Qm")
     assert signature.startswith("0x")
