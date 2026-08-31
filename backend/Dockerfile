@@ -21,6 +21,10 @@ RUN uv sync --frozen
 # Now copy the rest of the backend code
 COPY . .
 
+# Compile the Vyper contract at build time (slow step, do it once here
+# instead of on every container boot)
+RUN uv run ape compile
+
 RUN chmod +x start.sh
 
 # Render sets $PORT at runtime; EXPOSE is just documentation
