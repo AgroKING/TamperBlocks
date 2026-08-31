@@ -1,13 +1,14 @@
-from contextlib import asynccontextmanager
+from typing import Any
+
 from fastapi import FastAPI, HTTPException
-from typing import Dict, Any
 from pydantic import BaseModel
+
 from utils.credgen import issue_credential_pdf
 from utils.services import (
+    get_system_status,
     issue_new_certificate,
-    verify_certificate_by_hash,
     revoke_certificate_by_hash,
-    get_system_status
+    verify_certificate_by_hash,
 )
 
 app = FastAPI(
@@ -24,41 +25,41 @@ class StudentMetadata(BaseModel):
     gpa: float
     issuing_institution: str
 
-@app.post("/issue", response_model=Dict[str, Any])
+@app.post("/issue", response_model=dict[str, Any])
 def issue_certificate(metadata: StudentMetadata):
     try:
         return issue_new_certificate(metadata.model_dump())
     except HTTPException as he:
         raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to issue certificate: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to issue certificate: {e!s}")
 
-@app.get("/verify/{target_hash_hex}", response_model=Dict[str, Any])
+@app.get("/verify/{target_hash_hex}", response_model=dict[str, Any])
 def verify_certificate(target_hash_hex: str):
     try:
         return verify_certificate_by_hash(target_hash_hex)
     except HTTPException as he:
         raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Verification failed: {e!s}")
 
-@app.post("/revoke/{target_hash_hex}", response_model=Dict[str, Any])
+@app.post("/revoke/{target_hash_hex}", response_model=dict[str, Any])
 def revoke_certificate(target_hash_hex: str):
     try:
         return revoke_certificate_by_hash(target_hash_hex)
     except HTTPException as he:
         raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Revocation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Revocation failed: {e!s}")
 
-@app.get("/status", response_model=Dict[str, Any])
+@app.get("/status", response_model=dict[str, Any])
 def get_system_status_endpoint():
     try:
         return get_system_status()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Status check failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Status check failed: {e!s}")
 
-@app.post("/generate-pdf", response_model=Dict[str, Any])
+@app.post("/generate-pdf", response_model=dict[str, Any])
 def generate_pdf(metadata: StudentMetadata):
     return issue_credential_pdf(metadata.model_dump())
 

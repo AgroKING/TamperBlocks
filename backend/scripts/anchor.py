@@ -1,6 +1,8 @@
-import sys
 import json
+import sys
+
 from ape import accounts, project
+
 
 def main():
     # args passed in from FastAPI via sys.argv

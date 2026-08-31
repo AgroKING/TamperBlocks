@@ -1,6 +1,9 @@
 # Using web3 for deploying smartcontracts!
-from ape import project,accounts
+from ape import accounts, project
+
 from utils.crypto import issuer_account
+
+
 def main():
     #account = accounts.load("meta_mask")  # TODO: use .env for safe loading
     account = accounts.test_accounts[0]
