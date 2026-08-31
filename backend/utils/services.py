@@ -11,7 +11,7 @@ from utils.crypto import (
 from utils.ipfs import upload_to_ipfs, fetch_from_ipfs
 from utils.bridge import run_ape_script
 
-CONTRACT_ADDRESS = os.environ.get("CONTRACT_ADDRESS", "0xYourDeployedAddressHere")
+CONTRACT_ADDRESS = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'
 
 
 def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
@@ -115,7 +115,7 @@ def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
     }
 
 
-def revoke_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
+def revoke_certificate_by_hash(target_hash_hex: str, reason: str = "") -> Dict[str, Any]:
     """
     Business logic to revoke a certificate on-chain.
     """
@@ -144,8 +144,34 @@ def revoke_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
     return {
         "status": "success",
         "message": f"Certificate with hash {target_hash_hex} successfully revoked on-chain",
-        "transaction_hash": result.get("tx_hash")
+        "transaction_hash": result.get("tx_hash"),
+        "reason": reason
     }
+
+
+def lookup_by_student_id(student_id: str) -> Dict[str, Any]:
+    """
+    Looks up a certificate by student_id by searching the IPFS mock database.
+    Returns the metadata and associated target_hash.
+    """
+    from utils.ipfs import _load_ipfs_db
+    from utils.crypto import canonicalize_json, hash_canonical_json
+
+    db = _load_ipfs_db()
+    for cid, metadata in db.items():
+        if metadata.get("student_id", "").strip().lower() == student_id.strip().lower():
+            # Recompute the target_hash from the metadata
+            canonical = canonicalize_json(metadata)
+            target_hash = hash_canonical_json(canonical)
+            target_hash_hex = "0x" + target_hash.hex()
+            return {
+                "found": True,
+                "student_id": metadata["student_id"],
+                "target_hash": target_hash_hex,
+                "ipfs_cid": cid,
+                "metadata": metadata
+            }
+    raise HTTPException(status_code=404, detail=f"No certificate found for student ID: {student_id}")
 
 
 def get_system_status() -> Dict[str, Any]:

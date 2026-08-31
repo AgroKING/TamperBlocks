@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CredentialCard from "../components/credcard";
+import { api } from "../services/api";
 
 function Lookup() {
     const [studentId, setStudentId] = useState("");
@@ -19,28 +20,8 @@ function Lookup() {
         setLoading(true);
 
         try {
-            const response = await fetch("http://localhost:3000/credentials");
-
-            if (!response.ok) {
-                throw new Error("Unable to connect to the database.");
-            }
-
-            const data = await response.json();
-
-            // Search for matching student_id (case-insensitive)
-            const matchedCredential = Array.isArray(data)
-                ? data.find(
-                    (item) =>
-                        item.student_id &&
-                        String(item.student_id).trim().toLowerCase() === studentId.trim().toLowerCase()
-                )
-                : null;
-
-            if (!matchedCredential) {
-                throw new Error("No credential found for this Student ID.");
-            }
-
-            setCredential(matchedCredential);
+            const result = await api.lookupByStudentId(studentId);
+            setCredential(result);
         } catch (err) {
             setError(err.message || "No credential found for this Student ID.");
         } finally {
@@ -112,7 +93,11 @@ function Lookup() {
                             <div className="lookup-success">
                                 <span className="success-icon">✓</span> Credential Found & Verified
                             </div>
-                            <CredentialCard data={credential} />
+                            <CredentialCard data={{
+                                ...credential.metadata,
+                                target_hash: credential.target_hash,
+                                ipfs_cid: credential.ipfs_cid
+                            }} />
                         </div>
                     )}
 

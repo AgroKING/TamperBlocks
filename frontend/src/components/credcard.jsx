@@ -17,7 +17,7 @@ export default function CredentialCard({ data = {} }) {
                 {/* Avatar Section */}
                 <div style={cardStyles.avatarContainer}>
                     <div style={cardStyles.avatar}>{getInitial(data.name)}</div>
-                    <span style={cardStyles.rollBadge}>{data.Rollno || 'ID MISSING'}</span>
+                    <span style={cardStyles.rollBadge}>{data.student_id || 'ID MISSING'}</span>
                 </div>
 
                 {/* Details Grid */}
@@ -30,12 +30,12 @@ export default function CredentialCard({ data = {} }) {
                             <p style={cardStyles.metaValue}>{data.degree || '—'}</p>
                         </div>
                         <div>
-                            <span style={cardStyles.metaLabel}>Branch</span>
-                            <p style={cardStyles.metaValue}>{data.branch || '—'}</p>
+                            <span style={cardStyles.metaLabel}>Major</span>
+                            <p style={cardStyles.metaValue}>{data.major || '—'}</p>
                         </div>
                         <div>
-                            <span style={cardStyles.metaLabel}>Graduation Year</span>
-                            <p style={cardStyles.metaValue}>{data.gyear || '—'}</p>
+                            <span style={cardStyles.metaLabel}>GPA</span>
+                            <p style={cardStyles.metaValue}>{data.gpa || '—'}</p>
                         </div>
                     </div>
                 </div>

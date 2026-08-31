@@ -1,1 +1,8 @@
 name: backend
+default_ecosystem: ethereum
+
+ethereum:
+  default_network: local
+
+foundry:
+  host: http://127.0.0.1:8545

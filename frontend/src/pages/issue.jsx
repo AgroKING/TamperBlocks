@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../services/api";
 
 function Issue({ data, setdata }) {
 
@@ -21,61 +22,14 @@ function Issue({ data, setdata }) {
         setLoading(true);
 
         try {
-            // Check for an existing credential with the same Student ID or Name first
-            const existingResponse = await fetch("http://localhost:3000/credentials");
+            const result = await api.issueCertificate(data);
 
-            if (!existingResponse.ok) {
-                throw new Error("Unable to verify existing records. Please try again.");
-            }
-
-            const existingCredentials = await existingResponse.json();
-            const credentialsList = Array.isArray(existingCredentials) ? existingCredentials : [];
-
-            const duplicateId = credentialsList.find(
-                (item) =>
-                    item.student_id &&
-                    String(item.student_id).trim().toLowerCase() === data.student_id.trim().toLowerCase()
-            );
-
-            if (duplicateId) {
-                throw new Error(
-                    `A credential already exists for Student ID "${data.student_id}". Each student can only have one credential on record.`
-                );
-            }
-
-            const duplicateName = credentialsList.find(
-                (item) =>
-                    item.name &&
-                    String(item.name).trim().toLowerCase() === data.name.trim().toLowerCase()
-            );
-
-            if (duplicateName) {
-                throw new Error(
-                    `A credential already exists for the name "${data.name}" (Student ID "${duplicateName.student_id}"). Please double-check the details before issuing.`
-                );
-            }
-
-            const response = await fetch(
-                "http://localhost:3000/credentials",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Failed to issue credential");
-            }
-
-            const result = await response.json();
-
-            // For now, mock blockchain information
             const credentialResult = {
-                ...result,
-                credential_hash: "8f92a7c1e4b5d9...",
+                ...data,
+                credential_hash: result.target_hash,
+                ipfs_cid: result.ipfs_cid,
+                transaction_hash: result.transaction_hash,
+                block_index: result.block_index,
                 blockchain_status: "ANCHORED",
                 issued_at: new Date().toLocaleString()
             };
@@ -233,12 +187,20 @@ function Issue({ data, setdata }) {
                             <strong>{data.degree}</strong>
                         </div>
                         <div className="info-item">
-                            <span>Credential ID</span>
-                            <strong>{issuedCredential.id}</strong>
+                            <span>Certificate Hash</span>
+                            <strong className="hash">{issuedCredential.credential_hash}</strong>
                         </div>
                         <div className="info-item">
-                            <span>Credential Hash</span>
-                            <strong className="hash">{issuedCredential.credential_hash}</strong>
+                            <span>IPFS CID</span>
+                            <strong className="hash">{issuedCredential.ipfs_cid}</strong>
+                        </div>
+                        <div className="info-item">
+                            <span>Transaction Hash</span>
+                            <strong className="hash">{issuedCredential.transaction_hash}</strong>
+                        </div>
+                        <div className="info-item">
+                            <span>Block Index</span>
+                            <strong>{issuedCredential.block_index}</strong>
                         </div>
                         <div className="info-item">
                             <span>Blockchain Status</span>
