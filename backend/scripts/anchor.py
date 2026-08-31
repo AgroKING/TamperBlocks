@@ -14,7 +14,9 @@ def main():
     target_hash = bytes.fromhex(target_hash_hex.replace("0x", ""))
     signature = bytes.fromhex(signature_hex.replace("0x", ""))
 
-    tx_receipt = contract.anchor_certificate(target_hash, ipfs_cid, signature, sender=account)
+    tx_receipt = contract.anchor_certificate(
+        target_hash, ipfs_cid, signature, sender=account
+    )
     events = list(tx_receipt.decode_logs(contract.CertificateAnchored))
 
     result = {

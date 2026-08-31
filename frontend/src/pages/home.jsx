@@ -203,7 +203,7 @@ export function Home() {
                 {/* Left Side: Header & Editorial */}
                 <div className="home-header">
                     <span className="home-eyebrow">
-                        TEAM-OMNICODE
+                        Team OmniCoded
                     </span>
 
                     <h1>

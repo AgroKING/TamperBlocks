@@ -1,20 +1,20 @@
-import os
-from typing import Dict, Any
+from typing import Any
+
 from fastapi import HTTPException
+
+from utils.bridge import run_ape_script
 from utils.crypto import (
     canonicalize_json,
     hash_canonical_json,
     sign_hash,
     verify_signature,
-    issuer_account,
 )
-from utils.ipfs import upload_to_ipfs, fetch_from_ipfs
-from utils.bridge import run_ape_script
+from utils.ipfs import fetch_from_ipfs, upload_to_ipfs
 
-CONTRACT_ADDRESS = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'
+CONTRACT_ADDRESS = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
 
 
-def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
+def issue_new_certificate(metadata_dict: dict[str, Any]) -> dict[str, Any]:
     """
     Business logic for issuing a new certificate and anchoring it on-chain.
     All chain interaction happens inside the Ape script this calls out to.
@@ -23,25 +23,35 @@ def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
     target_hash = hash_canonical_json(canonical_json)
     target_hash_hex = "0x" + target_hash.hex()
 
-    existing = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+    existing = run_ape_script(
+        "retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS]
+    )
     if existing.get("exists"):
-        raise HTTPException(status_code=400, detail="Certificate target hash already anchored on-chain")
+        raise HTTPException(
+            status_code=400, detail="Certificate target hash already anchored on-chain"
+        )
 
     student_id = metadata_dict.get("student_id", "")
     if student_id:
         from utils.ipfs import _load_ipfs_db
+
         db = _load_ipfs_db()
         for cid, metadata in db.items():
-            if metadata.get("student_id", "").strip().lower() == student_id.strip().lower():
+            if (
+                metadata.get("student_id", "").strip().lower()
+                == student_id.strip().lower()
+            ):
                 check_canonical = canonicalize_json(metadata)
                 check_hash = hash_canonical_json(check_canonical)
                 check_hash_hex = "0x" + check_hash.hex()
-                
-                check_existing = run_ape_script("retrieve", ["get_certificate", check_hash_hex, CONTRACT_ADDRESS])
+
+                check_existing = run_ape_script(
+                    "retrieve", ["get_certificate", check_hash_hex, CONTRACT_ADDRESS]
+                )
                 if check_existing.get("exists") and not check_existing.get("revoked"):
                     raise HTTPException(
-                        status_code=400, 
-                        detail=f"An active certificate already exists for Student ID '{student_id}'. Revoke it first before issuing a new one."
+                        status_code=400,
+                        detail=f"An active certificate already exists for Student ID '{student_id}'. Revoke it first before issuing a new one.",
                     )
 
     signature = sign_hash(target_hash)
@@ -50,12 +60,17 @@ def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
     ipfs_cid = upload_to_ipfs(metadata_dict)
 
     try:
-        result = run_ape_script("anchor", [target_hash_hex, ipfs_cid, signature_hex, CONTRACT_ADDRESS])
+        result = run_ape_script(
+            "anchor", [target_hash_hex, ipfs_cid, signature_hex, CONTRACT_ADDRESS]
+        )
     except RuntimeError as e:
         raise HTTPException(status_code=502, detail=f"Anchoring failed: {e}")
 
     if result.get("status") != "success":
-        raise HTTPException(status_code=502, detail=f"Anchoring failed: {result.get('error', 'unknown error')}")
+        raise HTTPException(
+            status_code=502,
+            detail=f"Anchoring failed: {result.get('error', 'unknown error')}",
+        )
 
     return {
         "status": "success",
@@ -68,7 +83,7 @@ def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
+def verify_certificate_by_hash(target_hash_hex: str) -> dict[str, Any]:
     """
     Business logic to verify a certificate's integrity and authenticity.
     """
@@ -78,15 +93,17 @@ def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
     try:
         bytes.fromhex(target_hash_hex[2:])
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid target hash format. Must be a valid hex string.")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid target hash format. Must be a valid hex string.",
+        )
 
-    record = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+    record = run_ape_script(
+        "retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS]
+    )
 
     if not record.get("exists"):
-        return {
-            "verified": False,
-            "reason": "Target hash not anchored on the ledger"
-        }
+        return {"verified": False, "reason": "Target hash not anchored on the ledger"}
 
     ipfs_cid = record["ipfs_cid"]
     signature_bytes = bytes.fromhex(record["issuer_signature"].replace("0x", ""))
@@ -99,7 +116,7 @@ def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
 
     re_canonical = canonicalize_json(ipfs_data)
     re_hash = hash_canonical_json(re_canonical)
-    integrity_ok = (re_hash == target_hash)
+    integrity_ok = re_hash == target_hash
 
     issuer_info = run_ape_script("retrieve", ["get_issuer", CONTRACT_ADDRESS])
     issuer_address = issuer_info["issuer"]
@@ -126,13 +143,15 @@ def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
             "ipfs_cid": ipfs_cid,
             "integrity_check_passed": integrity_ok,
             "signature_check_passed": signature_ok,
-            "not_revoked": active_ok
+            "not_revoked": active_ok,
         },
-        "metadata": ipfs_data
+        "metadata": ipfs_data,
     }
 
 
-def revoke_certificate_by_hash(target_hash_hex: str, reason: str = "") -> Dict[str, Any]:
+def revoke_certificate_by_hash(
+    target_hash_hex: str, reason: str = ""
+) -> dict[str, Any]:
     """
     Business logic to revoke a certificate on-chain.
     """
@@ -142,9 +161,14 @@ def revoke_certificate_by_hash(target_hash_hex: str, reason: str = "") -> Dict[s
     try:
         bytes.fromhex(target_hash_hex[2:])
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid target hash format. Must be a valid hex string.")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid target hash format. Must be a valid hex string.",
+        )
 
-    record = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+    record = run_ape_script(
+        "retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS]
+    )
     if not record.get("exists"):
         raise HTTPException(status_code=404, detail="Certificate not found on-chain")
     if record.get("revoked"):
@@ -156,49 +180,54 @@ def revoke_certificate_by_hash(target_hash_hex: str, reason: str = "") -> Dict[s
         raise HTTPException(status_code=502, detail=f"Revocation failed: {e}")
 
     if result.get("status") != "success":
-        raise HTTPException(status_code=502, detail=f"Revocation failed: {result.get('error', 'unknown error')}")
+        raise HTTPException(
+            status_code=502,
+            detail=f"Revocation failed: {result.get('error', 'unknown error')}",
+        )
 
     return {
         "status": "success",
         "message": f"Certificate with hash {target_hash_hex} successfully revoked on-chain",
         "transaction_hash": result.get("tx_hash"),
-        "reason": reason
+        "reason": reason,
     }
 
 
-def lookup_by_student_id(student_id: str) -> Dict[str, Any]:
+def lookup_by_student_id(student_id: str) -> dict[str, Any]:
     """
     Looks up a certificate by student_id by searching the IPFS mock database.
     Returns the metadata and associated target_hash.
     """
-    from utils.ipfs import _load_ipfs_db
     from utils.crypto import canonicalize_json, hash_canonical_json
+    from utils.ipfs import _load_ipfs_db
 
     db = _load_ipfs_db()
-    
+
     best_match = None
-    
+
     for cid, metadata in db.items():
         if metadata.get("student_id", "").strip().lower() == student_id.strip().lower():
             # Recompute the target_hash from the metadata
             canonical = canonicalize_json(metadata)
             target_hash = hash_canonical_json(canonical)
             target_hash_hex = "0x" + target_hash.hex()
-            
+
             match_data = {
                 "found": True,
                 "student_id": metadata["student_id"],
                 "target_hash": target_hash_hex,
                 "ipfs_cid": cid,
-                "metadata": metadata
+                "metadata": metadata,
             }
-            
+
             # Check on-chain status
-            check_existing = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
-            
+            check_existing = run_ape_script(
+                "retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS]
+            )
+
             match_data["revoked"] = check_existing.get("revoked", False)
             match_data["timestamp"] = check_existing.get("timestamp", 0)
-            
+
             if check_existing.get("exists") and not check_existing.get("revoked"):
                 # Active certificate found! Return it immediately.
                 return match_data
@@ -211,11 +240,13 @@ def lookup_by_student_id(student_id: str) -> Dict[str, Any]:
 
     if best_match:
         return best_match
-        
-    raise HTTPException(status_code=404, detail=f"No certificate found for student ID: {student_id}")
+
+    raise HTTPException(
+        status_code=404, detail=f"No certificate found for student ID: {student_id}"
+    )
 
 
-def get_system_status() -> Dict[str, Any]:
+def get_system_status() -> dict[str, Any]:
     """
     Business logic to fetch system metrics and metadata.
     """
@@ -226,34 +257,39 @@ def get_system_status() -> Dict[str, Any]:
         "owner_address": status["owner"],
         "issuer_address": status["issuer"],
         "total_certificates_anchored": status["certificate_count"],
-        "network": "local-foundry"
+        "network": "local-foundry",
     }
 
-def get_all_blocks() -> list[Dict[str, Any]]:
-    from utils.ipfs import _load_ipfs_db
+
+def get_all_blocks() -> list[dict[str, Any]]:
     from utils.crypto import canonicalize_json, hash_canonical_json
+    from utils.ipfs import _load_ipfs_db
 
     db = _load_ipfs_db()
     blocks = []
-    
+
     for cid, metadata in db.items():
         canonical = canonicalize_json(metadata)
         target_hash = hash_canonical_json(canonical)
         target_hash_hex = "0x" + target_hash.hex()
-        
+
         # Check on-chain status
         try:
-            on_chain = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+            on_chain = run_ape_script(
+                "retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS]
+            )
             if on_chain.get("exists"):
-                blocks.append({
-                    "hash": target_hash_hex,
-                    "cid": cid,
-                    "student_id": metadata.get("student_id"),
-                    "name": metadata.get("name"),
-                    "timestamp": on_chain.get("timestamp"),
-                    "revoked": on_chain.get("revoked"),
-                    "block_index": on_chain.get("block_index")
-                })
+                blocks.append(
+                    {
+                        "hash": target_hash_hex,
+                        "cid": cid,
+                        "student_id": metadata.get("student_id"),
+                        "name": metadata.get("name"),
+                        "timestamp": on_chain.get("timestamp"),
+                        "revoked": on_chain.get("revoked"),
+                        "block_index": on_chain.get("block_index"),
+                    }
+                )
         except Exception:
             pass
 

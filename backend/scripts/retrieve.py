@@ -2,8 +2,8 @@ import json
 import os
 
 from ape import accounts, project
-import warnings
-#warnings.filterwarnings("ignore")
+
+# warnings.filterwarnings("ignore")
 
 
 def main():
@@ -38,11 +38,15 @@ def main():
         owner = contract.owner()
         issuer = contract.issuer()
         certificate_count = contract.certificate_count()
-        print(json.dumps({
-            "owner": owner,
-            "issuer": issuer,
-            "certificate_count": certificate_count,
-        }))
+        print(
+            json.dumps(
+                {
+                    "owner": owner,
+                    "issuer": issuer,
+                    "certificate_count": certificate_count,
+                }
+            )
+        )
 
     else:
         print(json.dumps({"error": f"Unknown command: {command}"}))

@@ -15,7 +15,11 @@ def main():
 
     tx = contract.revoke_certificate(target_hash, sender=account)
 
-    print(json.dumps({
-        "status": "success",
-        "tx_hash": str(tx.txn_hash),
-    }))
+    print(
+        json.dumps(
+            {
+                "status": "success",
+                "tx_hash": str(tx.txn_hash),
+            }
+        )
+    )
