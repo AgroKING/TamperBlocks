@@ -1,7 +1,7 @@
 # TODO: Fetch required event from blockchain
 from ape import accounts, project
 from deploy import main as deployed
-from crypto import sign_hash, hash_canonical_json, canonicalize_json
+from utils.crypto import sign_hash, hash_canonical_json, canonicalize_json
 
 account = accounts.test_accounts[0]  # relayer/owner — pays gas, submits tx
 

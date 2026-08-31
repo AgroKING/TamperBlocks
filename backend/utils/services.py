@@ -23,7 +23,7 @@ def issue_new_certificate(metadata_dict: Dict[str, Any]) -> Dict[str, Any]:
     target_hash = hash_canonical_json(canonical_json)
     target_hash_hex = "0x" + target_hash.hex()
 
-    existing = run_ape_script("query", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+    existing = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
     if existing.get("exists"):
         raise HTTPException(status_code=400, detail="Certificate target hash already anchored on-chain")
 
@@ -63,7 +63,7 @@ def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid target hash format. Must be a valid hex string.")
 
-    record = run_ape_script("query", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+    record = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
 
     if not record.get("exists"):
         return {
@@ -84,7 +84,7 @@ def verify_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
     re_hash = hash_canonical_json(re_canonical)
     integrity_ok = (re_hash == target_hash)
 
-    issuer_info = run_ape_script("query", ["get_issuer", CONTRACT_ADDRESS])
+    issuer_info = run_ape_script("retrieve", ["get_issuer", CONTRACT_ADDRESS])
     issuer_address = issuer_info["issuer"]
     signature_ok = verify_signature(target_hash, signature_bytes, issuer_address)
 
@@ -127,7 +127,7 @@ def revoke_certificate_by_hash(target_hash_hex: str) -> Dict[str, Any]:
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid target hash format. Must be a valid hex string.")
 
-    record = run_ape_script("query", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
+    record = run_ape_script("retrieve", ["get_certificate", target_hash_hex, CONTRACT_ADDRESS])
     if not record.get("exists"):
         raise HTTPException(status_code=404, detail="Certificate not found on-chain")
     if record.get("revoked"):
@@ -152,7 +152,7 @@ def get_system_status() -> Dict[str, Any]:
     """
     Business logic to fetch system metrics and metadata.
     """
-    status = run_ape_script("query", ["get_status", CONTRACT_ADDRESS])
+    status = run_ape_script("retrieve", ["get_status", CONTRACT_ADDRESS])
     return {
         "status": "active",
         "contract_address": CONTRACT_ADDRESS,
