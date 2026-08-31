@@ -299,6 +299,37 @@ export function Home() {
                         </div>
                     </div>
 
+                    {/* Card 3: Blockchain Visualizer */}
+                    <div className="home-action-card card-blockchain">
+                        <div className="card-top-bar">
+                            <span className="card-badge badge-teal">LIVE LEDGER</span>
+                        </div>
+
+                        <div className="card-body">
+                            <div className="home-action-icon icon-teal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="6" x2="8" y2="18"></line>
+                                    <line x1="16" y1="6" x2="16" y2="18"></line>
+                                </svg>
+                            </div>
+
+                            <h2>Blockchain Ledger</h2>
+
+                            <p>
+                                Explore the live structure and integrity of the credential blockchain network.
+                            </p>
+
+                            <button
+                                className="home-button button-teal"
+                                onClick={() => navigate("/blockchain")}
+                            >
+                                View Blockchain
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
