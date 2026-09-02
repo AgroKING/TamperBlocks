@@ -13,9 +13,7 @@ anchoring, an intuitive visual blockchain explorer, immutable audit logging,
 and instant QR-based public verification that eliminates the need to contact the
 issuing institution directly.
 
-For source code, issue tracking, and contributions, visit the
-[TamperBlocks GitHub Repository](https://github.com/AgroKING/TamperBlocks).
-
+Deployed link : https://tamperblocks.duckdns.org
 
 ## Table of contents
 
@@ -59,9 +57,9 @@ This project requires the following tools and services:
    Python environment:
     ```bash
     cd backend
-    python -m venv .venv
+    uv venv 
     source .venv/bin/activate
-    pip install -r requirements.txt
+    uv sync
     ```
 1. Deploy the smart contract using Ape (make note of the deployed address):
     ```bash
@@ -69,7 +67,7 @@ This project requires the following tools and services:
     ```
 1. Start the FastAPI backend server (runs on `127.0.0.1:8000`):
     ```bash
-    python main.py
+    uv run main.py
     ```
 1. Open a third terminal, navigate to the frontend directory, and install Node
    dependencies:
