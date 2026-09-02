@@ -8,6 +8,8 @@ function Issue({ data, setdata }) {
     const [issuedCredential, setIssuedCredential] = useState(null);
     const [issueError, setIssueError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [pdfLoading, setPdfLoading] = useState(false);
+    const [pdfError, setPdfError] = useState(null);
 
     function handleChange(event) {
         setdata({
@@ -44,6 +46,30 @@ function Issue({ data, setdata }) {
         }
 
         setLoading(false);
+    }
+
+
+    async function handleDownloadPdf() {
+        setPdfError(null);
+        setPdfLoading(true);
+    
+        try {
+            const { blob, pdfHash } = await api.downloadPdf(data);
+    
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${data.student_id}_certificate.pdf`;
+            link.click();
+            URL.revokeObjectURL(url);
+    
+            console.log("PDF hash:", pdfHash);
+        } catch (error) {
+            console.error(error);
+            setPdfError(error.message || "PDF download failed. Please try again.");
+        }
+    
+        setPdfLoading(false);
     }
 
     return (
@@ -228,6 +254,16 @@ function Issue({ data, setdata }) {
                     <button className="verify-button" onClick={() => navigate("/institution")}>
                         Verify Credential
                     </button>
+                    <button
+                        className="verify-button"
+                        onClick={handleDownloadPdf}
+                        disabled={pdfLoading}
+                        style={{ marginTop: "0.75rem" }}
+                    >
+                        {pdfLoading ? "Generating PDF..." : "Download PDF"}
+                    </button>
+
+                    {pdfError && <div className="error-message">❌ {pdfError}</div>}
                 </div>
             )}
         </div>

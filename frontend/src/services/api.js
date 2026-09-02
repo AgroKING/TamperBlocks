@@ -66,4 +66,17 @@ export const api = {
         if (!res.ok) throw new Error('PDF generation failed');
         return res.json();
     },
+
+    async downloadPdf(studentMetadata) {
+        const res = await fetch(`${API_BASE}/generate-pdf/download`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(studentMetadata),
+        });
+        if (!res.ok) throw new Error('PDF download failed');
+    
+        const pdfHash = res.headers.get('X-PDF-Hash');
+        const blob = await res.blob();
+        return { blob, pdfHash };
+    },
 };
